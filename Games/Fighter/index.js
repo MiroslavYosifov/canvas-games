@@ -18,22 +18,41 @@ document.body.appendChild(app.view);
 app.loader
     .add([
         'images/fighter.json',
-        'images/cosmos3.jpg'
+        'images/cosmos3.jpg',
+        'images/fire.png'
     ])
     
     .load(setup);
 
-let fighter, state;
+let fighterContainer, fighter, fire, state;
+let props = {
+    direction: '',
+    prevDirection: ''
+}
 
 function setup() {
 
-    const texture = PIXI.utils.TextureCache["images/cosmos3.jpg"];
-    const cosmos = new Sprite(texture);
+    const cosmos = new Sprite(PIXI.utils.TextureCache['images/cosmos3.jpg']);
     cosmos.x = 0;
     cosmos.y = 0;
-    cosmos.scale.set(1.1, 1.1); 
+    cosmos.scale.set(1, 1); 
     app.stage.addChild(cosmos);
 
+    fire = new Sprite(PIXI.utils.TextureCache['images/fire.png'])
+    fire.x = 54;
+    fire.y = 151;
+    // fire.anchor.set(2.38, 3.4);
+    fire.rotation = 3.142;
+    fire.scale.set(0.2);
+
+    gsap.to(fire, 0, { delay: 0.2, onComplete: () => {
+        gsap.to(fire, 0.5, { repeat: -1, onRepeat: () => {
+            gsap.to(fire, 0.25, { pixi:{ scale: 0.2, y: 151, x: 54 },  } );
+            gsap.to(fire, 0.25, { pixi:{ scale: 0.21, y: 158, x: 54 }, delay: 0.25 } );
+        } });
+    } })
+   
+    // app.stage.addChild(fire);
     const frames = [];
 
     for (let i = 0; i < 30; i++) {
@@ -42,17 +61,26 @@ function setup() {
     }
 
     fighter = new PIXI.AnimatedSprite(frames);
-
-    fighter.x = 300;
-    fighter.y = 300;
-    fighter.anchor.set(0.5);
-    fighter.vx = 0;
-    fighter.vy = 0;
-    fighter.scale.set(0.5, 0.5); 
+    fighter.x = 0;
+    fighter.y = 0;
     fighter.animationSpeed = 0.5;
+    fighter.scale.set(0.5, 0.5); 
     fighter.play();
 
-    app.stage.addChild(fighter);
+    // app.stage.addChild(fighter);
+
+    fighterContainer = new Container();
+    fighterContainer.x = 300;
+    fighterContainer.y = 300;
+    fighterContainer.vx = 0;
+    fighterContainer.vy = 0;
+    fighterContainer.animationSpeed = 0.5;
+    fighterContainer.pivot.set(fighter.width / 2, fighter.height / 2);
+    fighterContainer.addChild(fire);
+    fighterContainer.addChild(fighter);
+    app.stage.addChild(fighterContainer);
+    // console.log(fighterContainer.width);
+    // console.log(fighterContainer.height);
 
     const left = keyboard("ArrowLeft"),
         up = keyboard("ArrowUp"),
@@ -60,91 +88,106 @@ function setup() {
         down = keyboard("ArrowDown");
 
     left.press = () => {
-        fighter.vx = -5;
-        fighter.vy = 0;
-        gsap.to(fighter, 0.4, { rotation: -1.6 });
+        fighterContainer.vx = -5;
+        fighterContainer.vy = 0;
+        gsap.to(fighterContainer, 0.4, { rotation: -1.6 });
+        props.direction = "left";
     };
     left.release = () => {
-        if (!right.isDown && fighter.vy === 0) {
-            fighter.vx = 0;
+        if (!right.isDown && fighterContainer.vy === 0) {
+            fighterContainer.vx = 0;
         }
     };
 
     up.press = () => {
-        fighter.vy = -5;
-        fighter.vx = 0;
-        gsap.to(fighter, 0.4, { rotation: 0 });
+        fighterContainer.vy = -5;
+        fighterContainer.vx = 0;
+        gsap.to(fighterContainer, 0.4, { rotation: 0 });
+        props.direction = "up";
     }
     up.release = () => {
-        if (!down.isDown && fighter.vx === 0) {
-            fighter.vy = 0;
+        if (!down.isDown && fighterContainer.vx === 0) {
+            fighterContainer.vy = 0;
         }
     };
 
     right.press = () => {
-        fighter.vx = 5;
-        fighter.vy = 0;
-        gsap.to(fighter, 0.4, { rotation: 1.6 });
+        fighterContainer.vx = 5;
+        fighterContainer.vy = 0;
+        gsap.to(fighterContainer, 0.4, { rotation: 1.6 });
+        props.direction = "right";
     };
     right.release = () => {
-        if (!left.isDown && fighter.vy === 0) {
-            fighter.vx = 0;
+        if (!left.isDown && fighterContainer.vy === 0) {
+            fighterContainer.vx = 0;
         }
     };
 
-
     down.press = () => {
-        fighter.vy = 5;
-        fighter.vx = 0;
-        gsap.to(fighter, 0.4, { rotation: 3.2 });
+        fighterContainer.vy = 5;
+        fighterContainer.vx = 0;
+        gsap.to(fighterContainer, 0.4, { rotation: 3.2 });
+        props.direction = "down";
     };
     down.release = () => {
-        if (!up.isDown && fighter.vx === 0) {
-            fighter.vy = 0;
+        if (!up.isDown && fighterContainer.vx === 0) {
+            fighterContainer.vy = 0;
         }
     };
 
     state = play;
-    app.ticker.add((props) => gameLoop(props));
+    app.ticker.add((delta) => gameLoop(delta, props));
 }
 
-function gameLoop(props) {
-  state(props);
+function gameLoop(delta, props) {
+  state(delta, props);
 }
 
-function play() {
-  fighter.x += fighter.vx;
-  fighter.y += fighter.vy;
+function play(delta, props) {
 
-  checkForColision();
+    if(props.direction != props.prevDirection) {
+        checkDirection(props);
+        props.prevDirection = props.direction;
+    }
+   
+    fighterContainer.x += fighterContainer.vx;
+    fighterContainer.y += fighterContainer.vy;
+    checkForFieldColision();
+  
 }
 
 
-function checkForColision() {
+function checkDirection(props) {
+    if(props.direction === 'up') {
+        console.log('UP');
+    } else if (props.direction === 'down') {
+        console.log('DOWN');
+    } else if(props.direction === 'left') {
+        console.log('LEFT');
+    } else if(props.direction === 'right') {
+        console.log('RIGHT');
+    }
+}
+
+
+function checkForFieldColision() {
 
     const fieldW = app.view.width;
     const fieldH = app.view.height;
 
     const diff = Math.abs(fighter.height - fighter.width) * 2;
-    const fighterLeftPosition = fighter.x - diff;
-    const fighterRigthPosition = fighter.x + fighter.width - diff / 2;
-    const fighterUpPosition = fighter.y - diff;
-    const fighterDownPosition = fighter.y + fighter.width - diff / 2;
+    const fighterLeftPosition = fighterContainer.x - (fighter.width - diff / 2);
+    const fighterRigthPosition = fighterContainer.x + fighter.width - diff / 2;
+    const fighterUpPosition = fighterContainer.y - (fighter.width - diff / 2);
+    const fighterDownPosition = fighterContainer.y + fighter.width - diff / 2;
 
     if(fighterLeftPosition < 0) {
-        fighter.x = fieldW - fighter.width + diff / 2;
-        // console.log("LEFT");
+        fighterContainer.x = fieldW - (fighter.width - diff / 2);
     } else if(fighterRigthPosition > fieldW) {
-        fighter.x = diff;
-        // console.log("RIGHT");
+        fighterContainer.x = (fighter.width - diff / 2);
     } else if(fighterUpPosition < 0) {  
-        fighter.y = fieldH - fighter.width + diff / 2;
-        // console.log("UP");
+        fighterContainer.y = fieldH - (fighter.width - diff / 2);
     } else if(fighterDownPosition > fieldH) {
-        fighter.y = diff;
-        // console.log("DOWN");
+        fighterContainer.y = (fighter.width - diff / 2); 
     }
-
 }
-
-
