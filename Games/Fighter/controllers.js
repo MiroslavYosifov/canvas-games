@@ -6,6 +6,7 @@ export function keyboard(value) {
     key.press = undefined;
     key.release = undefined;
     //The `downHandler`
+
     key.downHandler = (event) => {
       if (event.key === key.value) {
         if (key.isUp && key.press) {

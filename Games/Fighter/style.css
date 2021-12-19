@@ -5,5 +5,35 @@ body {
 canvas {
     display: block;
     margin: 6rem auto;
+    margin-top: 0;
     border: 1px solid rgb(85, 85, 85);
+}
+
+.navigation {
+    display: block;
+    width: 1100px;
+    margin: 1rem auto;
+    margin-top: 6rem;
+}
+
+.navigation .flash-progres {
+    display: flex;
+}
+
+.navigation .flash-progres-txt {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.navigation .flash-progres-slider {
+    overflow: hidden;
+    display: flex;
+    width: 100px;
+    margin-left: 10px;
+    border: 2px solid rgb(255, 255, 147);
+    border-radius: 6px;
+}
+
+.navigation .flash-progres-slider-inner {
+    background: rgb(66, 0, 172);
+    width: 100%;
 }
