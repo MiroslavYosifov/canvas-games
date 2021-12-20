@@ -21,7 +21,8 @@ app.loader
     .add([
         'images/fighter.json',
         'images/cosmos3.jpg',
-        'images/fire.png'
+        'images/fire.png',
+        'images/laser2.png'
     ])
     
     .load(setup);
@@ -31,6 +32,7 @@ let props = {
     direction: 'up',
     prevDirection: 'up',
     command: '',
+    shotCommand: '',
     isDashLoaded: true,
     isDashLoading: true,
 }
@@ -42,6 +44,18 @@ function setup() {
     cosmos.y = 0;
     cosmos.scale.set(1, 1); 
     app.stage.addChild(cosmos);
+
+    // function generateShot() {
+    //     const shotImg;
+    //     shotImg = new Sprite(PIXI.utils.TextureCache['images/laser2.png'])
+    //     shotImg.x = 54;
+    //     shotImg.y = 151;
+    //     shotImg.vx = 0;
+    //     shotImg.vy = 0;
+    //     // fire.anchor.set(2.38, 3.4);
+    //     shotImg.scale.set(0.1);
+    //     app.stage.addChild(shotImg);
+    // }
 
     fire = new Sprite(PIXI.utils.TextureCache['images/fire.png'])
     fire.x = 54;
@@ -91,15 +105,24 @@ function setup() {
         up = keyboard('ArrowUp'),
         right = keyboard('ArrowRight'),
         down = keyboard('ArrowDown'),
-        space = keyboard(' ');
+        space = keyboard(' '),
+        shot = keyboard('f');
 
     // console.log(space);
+
+    shot.press = () => {
+        console.log("fire event");
+        props.shotCommand = 'shot';
+    };
+    shot.release = () => {
+       
+    };
+
     space.press = () => {
-        
+
         if(props.isDashLoaded) {
             props.command = 'flash';
         }
-
         space.unsubscribeKeyDown();
         if(props.isDashLoading) {
             props.isDashLoading = false;
@@ -181,6 +204,10 @@ function play(delta, props) {
         props.command = '';
         flashCommand(props.prevDirection);
     }
+
+    // if(props.shotCommand === 'shot') {
+    //     shotCommand(props.prevDirection);
+    // }
     
     fighterContainer.x += fighterContainer.vx;
     fighterContainer.y += fighterContainer.vy;
@@ -197,6 +224,23 @@ function checkDirection(props) {
         //console.log('LEFT');
     } else if(props.direction === 'right') {
         //console.log('RIGHT');
+    }
+}
+
+function shotCommand(direction) {
+    
+    if(direction === 'up') {
+        fighterContainer.y += -1;
+        fighterContainer.x += 0;
+    } else if (direction === 'down') {
+        fighterContainer.y += 1;
+        fighterContainer.x += 0;
+    } else if(direction === 'left') {
+        fighterContainer.x += -1;
+        fighterContainer.y += 0;
+    } else if(direction === 'right') {
+        fighterContainer.x += 1;
+        fighterContainer.y += 0;
     }
 }
 
