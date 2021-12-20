@@ -42,6 +42,14 @@ export function keyboard(value) {
       window.removeEventListener("keydown", downListener);
       window.removeEventListener("keyup", upListener);
     };
+
+    key.subscribeKeyDown = () => {
+        window.addEventListener("keydown", downListener, false);
+    }
     
+    key.unsubscribeKeyDown = () => {
+        window.removeEventListener("keydown", downListener);
+    }
+
     return key;
   }

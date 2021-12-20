@@ -93,20 +93,24 @@ function setup() {
         down = keyboard('ArrowDown'),
         space = keyboard(' ');
 
-
+    // console.log(space);
     space.press = () => {
-        props.command = 'flash';
-    };
-    space.release = () => {
-        props.command = '';
+        
+        if(props.isDashLoaded) {
+            props.command = 'flash';
+        }
+
+        space.unsubscribeKeyDown();
         if(props.isDashLoading) {
             props.isDashLoading = false;
             gsap.fromTo(flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
-                console.log("Dash is loaded");
                 props.isDashLoaded = true;
                 props.isDashLoading = true;
             }});
         }
+    };
+    space.release = () => {
+        space.subscribeKeyDown();
     };
 
     up.press = () => {
@@ -171,10 +175,11 @@ function play(delta, props) {
         checkDirection(props);
         props.prevDirection = props.direction;
     }
-
+    // console.log(props.command);
     if(props.command === 'flash' && props.isDashLoaded) {
         props.isDashLoaded = false;
-        dashCommand(props.prevDirection);
+        props.command = '';
+        flashCommand(props.prevDirection);
     }
     
     fighterContainer.x += fighterContainer.vx;
@@ -195,7 +200,7 @@ function checkDirection(props) {
     }
 }
 
-function dashCommand(direction) {
+function flashCommand(direction) {
     const flash = 120;
     if(direction === 'up') {
         fighterContainer.y += (flash * -1);
