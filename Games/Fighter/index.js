@@ -24,7 +24,6 @@ app.loader
         'images/fire.png',
         'images/laser2.png'
     ])
-    
     .load(setup);
 
 let fighterContainer, fighter, fire, state;
@@ -35,6 +34,32 @@ let props = {
     shotCommand: '',
     isDashLoaded: true,
     isDashLoading: true,
+    shots: [
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+        { isLoaded: false, shot: {} },
+    ]
 }
 
 function setup() {
@@ -44,18 +69,6 @@ function setup() {
     cosmos.y = 0;
     cosmos.scale.set(1, 1); 
     app.stage.addChild(cosmos);
-
-    // function generateShot() {
-    //     const shotImg;
-    //     shotImg = new Sprite(PIXI.utils.TextureCache['images/laser2.png'])
-    //     shotImg.x = 54;
-    //     shotImg.y = 151;
-    //     shotImg.vx = 0;
-    //     shotImg.vy = 0;
-    //     // fire.anchor.set(2.38, 3.4);
-    //     shotImg.scale.set(0.1);
-    //     app.stage.addChild(shotImg);
-    // }
 
     fire = new Sprite(PIXI.utils.TextureCache['images/fire.png'])
     fire.x = 54;
@@ -112,7 +125,10 @@ function setup() {
 
     shot.press = () => {
         console.log("fire event");
-        props.shotCommand = 'shot';
+        if(!props.shotCommand) {
+            props.shotCommand = 'shot';
+        }
+       
     };
     shot.release = () => {
        
@@ -205,9 +221,11 @@ function play(delta, props) {
         flashCommand(props.prevDirection);
     }
 
-    // if(props.shotCommand === 'shot') {
-    //     shotCommand(props.prevDirection);
-    // }
+    if(props.shotCommand === 'shot') {
+        props.shotCommand = '';
+        console.log("TUK");
+        shotCommand(props.prevDirection);
+    }
     
     fighterContainer.x += fighterContainer.vx;
     fighterContainer.y += fighterContainer.vy;
@@ -227,20 +245,47 @@ function checkDirection(props) {
     }
 }
 
+function moveShots() {
+    for (let i = 0; i < props.shots.length; i++) {
+        let shot = generateShot(x, y, vx, vy, rotation);
+        app.stage.addChild(shot);
+    }
+}
+
 function shotCommand(direction) {
-    
+    let speed = 7; 
     if(direction === 'up') {
-        fighterContainer.y += -1;
-        fighterContainer.x += 0;
+        generateShotUtils(fighterContainer.x, fighterContainer.y, 0, (speed *= -1), 0);
     } else if (direction === 'down') {
-        fighterContainer.y += 1;
-        fighterContainer.x += 0;
+        generateShotUtils(fighterContainer.x, fighterContainer.y, 0, speed, 0);
     } else if(direction === 'left') {
-        fighterContainer.x += -1;
-        fighterContainer.y += 0;
+        generateShotUtils(fighterContainer.x, fighterContainer.y, 0, (speed *= -1), 0);
     } else if(direction === 'right') {
-        fighterContainer.x += 1;
-        fighterContainer.y += 0;
+        generateShotUtils(fighterContainer.x, fighterContainer.y, 0, speed, 0);
+    }
+
+    function generateShotUtils(x, y, vx, vy, rotation) {
+        for (let i = 0; i < props.shots.length; i++) {
+            let shot = generateShot(x, y, vx, vy, rotation);
+            props.shots[i].isLoaded = true;
+            props.shots[i].shot = shot;
+            app.stage.addChild(shot);
+        }
+    }
+
+    function generateShot(x, y, vx, vy, rotation) {
+        let shotImg;
+        shotImg = new Sprite(PIXI.utils.TextureCache['images/laser2.png'])
+        shotImg.x = x;
+        shotImg.y = y;
+        shotImg.vx = vx;
+        shotImg.vy = vy;
+        // fire.anchor.set(2.38, 3.4);
+        shotImg.rotation = rotation;
+        shotImg.scale.set(0.1);
+        app.stage.addChild(shotImg);    
+
+        return shotImg;
     }
 }
 
