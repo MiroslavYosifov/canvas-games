@@ -10,7 +10,8 @@ canvas {
 }
 
 .navigation {
-    display: block;
+    display: flex;
+    align-items: center;
     width: 1100px;
     margin: 1rem auto;
     margin-top: 6rem;
@@ -29,11 +30,16 @@ canvas {
     display: flex;
     width: 100px;
     margin-left: 10px;
-    border: 2px solid rgb(255, 255, 147);
-    border-radius: 6px;
+    /* border: 1px solid rgb(0, 48, 207);; */
+    border-radius: 1px;
 }
 
 .navigation .flash-progres-slider-inner {
-    background: rgb(66, 0, 172);
+    background: rgb(243, 213, 78);
     width: 100%;
 }
+
+.shot-container { display: flex; margin-left: 20px; }
+.shot-txt {  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: white; }
+.shots { display: flex; margin-left: 10px; }
+.shot {  width: 6px; margin-right: 2px; background-color: red; border-radius: 1px; }
