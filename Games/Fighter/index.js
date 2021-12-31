@@ -3,7 +3,7 @@
     const flashProgress = document.getElementById('flash-progres');
     const ammonition = document.getElementById('shot-container');
     const btnDesignStyle = document.getElementById('btn-design-style');
-    var isPixelVersion = false;
+    var isPixelVersion = true;
 
 
     // btnDesignStyle.addEventListener('click', changeDesignStyle);
@@ -66,6 +66,18 @@
         meteors: []
     }
 
+    let starTexture;
+
+    let starAmount;
+    let cameraZ;
+    let fov;
+    let baseSpeed;
+    let speed;
+    let warpSpeed;
+    let starStretch;
+    let starBaseSize;
+    let stars;
+
     reloadShots(props.shotsCount);
     generateAmmonitions(props.shotsCount);
     function generateAmmonitions (count) {
@@ -79,24 +91,84 @@
     function setup() {
 
         if(!isPixelVersion) {
-            const cosmos = new Sprite(PIXI.utils.TextureCache['images/cosmos3.jpg']);
+            let cosmos = new Sprite(PIXI.utils.TextureCache['images/cosmos3.jpg']);
             cosmos.x = 0;
             cosmos.y = 0;
             cosmos.scale.set(1, 1); 
+            cosmos.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.9, contrast: 1, blue: 0.5, red: 0.4, green: 0.2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.1)];
             app.stage.addChildAt(cosmos, 0);
+
+            // new Sprite(PIXI.utils.TextureCache['imagespixel4.jpg']);
+            starTexture = PIXI.Texture.from('images/star.png');
+
+            starAmount = 1000;
+            cameraZ = 0;
+            fov = 20;
+            baseSpeed = 0.02;
+            speed = 0;
+            warpSpeed = 0;
+            starStretch = 5;
+            starBaseSize = 0.05;
+
+            // Create the stars
+            stars = [];
+            for (var i = 0; i < starAmount; i++) {
+                var star = {
+                    sprite: new PIXI.Sprite(starTexture),
+                    z: 0,
+                    x: 0,
+                    y: 0
+                };
+                star.sprite.anchor.x = 0.5;
+                star.sprite.anchor.y = 0.7;
+                randomizeStar(star, true);
+                app.stage.addChild(star.sprite);
+                stars.push(star);
+            }
          
         } else {
             // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel1.jpg']); // STAVA
             // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel2.jpg']); // STAVA
             // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel4.jpg']); // STAVA
-            const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel5.jpg']); // STAVA
+            // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel5.jpg']); // STAVA
+            const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel4.jpg']); // STAVA
+            cosmos.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.6, contrast: 1.5, blue: 0.6, red: 0.5, green: 0.5, brightest: 2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.55)];
+            cosmos.scale.set(1.84, 1.94); 
             // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel6.jpg']); // STAVA
             // const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel7.jpg']); // STAVA
             cosmos.x = 0;
             cosmos.y = 0;
-            cosmos.scale.set(0.65, 0.65); 
+            // cosmos.scale.set(0.65, 0.65); 
             // cosmos.filters = [new PIXI.filters.PixelateFilter(4)];
             app.stage.addChildAt(cosmos, 0);
+
+            starTexture = PIXI.Texture.from('images/star.png');
+
+            starAmount = 200;
+            cameraZ = 0;
+            fov = 20;
+            baseSpeed = 0.01;
+            speed = 0;
+            warpSpeed = 0;
+            starStretch = 5;
+            starBaseSize = 0.05;
+
+            // Create the stars
+            stars = [];
+            for (var i = 0; i < starAmount; i++) {
+                var star = {
+                    sprite: new PIXI.Sprite(starTexture),
+                    z: 0,
+                    x: 0,
+                    y: 0
+                };
+                star.sprite.anchor.x = 0.5;
+                star.sprite.anchor.y = 0.7;
+                // star.sprite.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.6, contrast: 1.5, blue: 0.2, red: 0.8, green: 0.8, brightest: 2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.55)];
+                randomizeStar(star, true);
+                app.stage.addChild(star.sprite);
+                stars.push(star);
+            }
         }
 
         if(isPixelVersion) {
@@ -272,6 +344,43 @@
         checkForFieldColision();
         moveShots();
         moveMeteors();
+
+        // Listen for animate update
+         // Simple easing. This should be changed to proper easing function when used for real.
+         speed += (warpSpeed - speed) / 20;
+         cameraZ += delta * 10 * (speed + baseSpeed);
+         for (var i = 0; i < starAmount; i++) {
+            //  console.log(i);
+            //  console.log(stars);
+             var star = stars[i];
+             if (star.z < cameraZ) randomizeStar(star);      
+
+             // Map star 3d position to 2d with really simple projection
+             var z = star.z - cameraZ;
+             star.sprite.x = star.x * (fov / z) * app.renderer.screen.width + app.renderer.screen.width / 2;
+             star.sprite.y = star.y * (fov / z) * app.renderer.screen.width + app.renderer.screen.height / 2;        
+
+             // Calculate star scale & rotation.
+             var dxCenter = star.sprite.x - app.renderer.screen.width / 2;
+             var dyCenter = star.sprite.y - app.renderer.screen.height / 2;
+             var distanceCenter = Math.sqrt(dxCenter * dxCenter + dyCenter + dyCenter);
+             var distanceScale = Math.max(0, (2000 - z) / 2000);
+             star.sprite.scale.x = distanceScale * starBaseSize;
+             // Star is looking towards center so that y axis is towards center.
+             // Scale the star depending on how fast we are moving, what the stretchfactor is and depending on how far away it is from the center.
+             star.sprite.scale.y = distanceScale * starBaseSize + distanceScale * speed * starStretch * distanceCenter / app.renderer.screen.width;
+             star.sprite.rotation = Math.atan2(dyCenter, dxCenter) + Math.PI / 2;
+         }
+    }
+
+    function randomizeStar(star, initial) {
+        star.z = initial ? Math.random() * 2000 : cameraZ + Math.random() * 1000 + 2000;
+    
+        // Calculate star positions with radial random coordinate so no star hits the camera.
+        var deg = Math.random() * Math.PI * 2;
+        var distance = Math.random() * 50 + 1;
+        star.x = Math.cos(deg) * distance;
+        star.y = Math.sin(deg) * distance;
     }
 
     function checkDirection(props) {
@@ -293,6 +402,7 @@
         var speed = getRandomInt(1, 4);
 
         var randomMeteor = getRandomInt(0, 9);
+        var randomDirection = getRandomInt(0, 9);
 
         const framesFireMeteor = [];
         for (let i = 1; i < 25; i++) {
@@ -301,7 +411,7 @@
         }
     
         fireMeteor = new PIXI.AnimatedSprite(framesFireMeteor);
-        if(randomMeteor % 2 == 0) {
+        if(randomDirection % 2 == 0) {
             fireMeteor.x = getRandomInt(0, (app.view.width - 46));
             fireMeteor.y = 0;
         } else {
@@ -333,10 +443,39 @@
                 // console.log(props.shots[i].shot.name);
                 props.meteors[i].meteor.x += props.meteors[i].meteor.vx;
                 props.meteors[i].meteor.y += props.meteors[i].meteor.vy;
-                // checkForShotFieldColision(props.meteors[i].shot, i);
+                checkForMeteorFieldColision(props.meteors[i].meteor, i);
             }
         }
     }
+
+    
+    function checkForMeteorFieldColision(meteor, index) {
+
+        const fieldW = app.view.width;
+        const fieldH = app.view.height;
+
+        const diff = Math.abs(meteor.height - meteor.width) * 2;
+        const meteorLeftPosition = meteor.x - (meteor.width - diff);
+        const meteorRigthPosition = meteor.x + meteor.width - diff / 2;
+        const meteorUpPosition = meteor.y - (meteor.width - diff);
+        const meteorDownPosition = meteor.y + meteor.width - diff / 2;
+        
+        if(meteorLeftPosition < 0) {
+            // killMeteor(meteor, index);
+        } else if(meteorRigthPosition > fieldW + 60) {
+            killMeteor(meteor, index);
+        } else if(meteorUpPosition < 0) {  
+            // killMeteor(meteor, index);
+        } else if(meteorDownPosition > fieldH + 60) {
+            killMeteor(meteor, index);
+        }
+    }
+
+    function killMeteor(meteor, index) {
+        app.stage.removeChild(meteor);
+        props.meteors.splice(index, 1);
+    }
+
 
     function moveShots() {
         for (let i = 0; i < props.shots.length; i++) {
