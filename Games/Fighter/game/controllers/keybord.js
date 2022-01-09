@@ -51,6 +51,5 @@ export function keyboard(value) {
     key.unsubscribeKeyDown = () => {
         window.removeEventListener("keydown", downListener);
     }
-
     return key;
-  }
+}

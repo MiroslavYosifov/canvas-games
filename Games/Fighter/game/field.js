@@ -24,7 +24,7 @@ export class Field {
         this.isPixelVersion = isPixelVersion;
     }
 
-    generateField() {
+    render() {
         if(!this.isPixelVersion) {
             let cosmos = new Sprite(PIXI.utils.TextureCache['images/cosmos3.jpg']);
             cosmos.x = 0;
@@ -108,8 +108,6 @@ export class Field {
         speed += (warpSpeed - speed) / 20;
         cameraZ += delta * 10 * (speed + baseSpeed);
         for (var i = 0; i < starAmount; i++) {
-           //  console.log(i);
-           //  console.log(stars);
             var star = stars[i];
             if (star.z < cameraZ) this.randomizeStar(star);      
        

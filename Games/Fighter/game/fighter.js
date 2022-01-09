@@ -1,3 +1,5 @@
+import { Collision } from "./collision.js";
+
 const Application = PIXI.Application,
 Container = PIXI.Container,
 loader = PIXI.Loader.shared,
@@ -12,12 +14,13 @@ export class Fighter {
         this.fighterContainer;
         this.fighter;
         this.fire;
+        this.speed = 0;
     }
 
-    generateFighterContainer() {
+    render() {
 
-        this.generateFighter();
-        this.generateFire();
+        this.renderFighter();
+        this.renderFire();
 
         this.fighterContainer = new Container();
         this.fighterContainer.x = 300;
@@ -31,7 +34,7 @@ export class Fighter {
         this.app.stage.addChild(this.fighterContainer);
     }
 
-    generateFighter () {
+    renderFighter () {
         const frames = [];
         for (let i = 0; i < 30; i++) {
             const val = i < 10 ? `0${i}` : i;
@@ -46,7 +49,7 @@ export class Fighter {
         this.fighter.play();
     }
 
-    generateFire() {
+    renderFire() {
         this.fire = new Sprite(PIXI.utils.TextureCache['images/fire.png'])
         this.fire.x = 54;
         this.fire.y = 151;
@@ -62,9 +65,31 @@ export class Fighter {
         } })
     }
 
-    move() {
+    move(direction) {
+        if(direction === 'up') {
+            this.fighterContainer.vy = this.speed * -1;
+            this.fighterContainer.vx = 0;
+        } else if (direction === 'down') {
+            this.fighterContainer.vy = this.speed;
+            this.fighterContainer.vx = 0;
+        } else if(direction === 'left') {
+            this.fighterContainer.vy = 0;
+            this.fighterContainer.vx = this.speed * -1;
+        } else if(direction === 'right') {
+            this.fighterContainer.vy = 0;
+            this.fighterContainer.vx = this.speed;
+        }
+
         this.fighterContainer.x += this.fighterContainer.vx;
         this.fighterContainer.y += this.fighterContainer.vy;
+    }
+
+    stop() {
+        this.speed = 0;
+    }
+
+    start() {
+        this.speed = 5;
     }
 
     rotate(direction) {
