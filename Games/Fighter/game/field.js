@@ -33,33 +33,6 @@ export class Field {
             cosmos.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.9, contrast: 1, blue: 0.5, red: 0.4, green: 0.2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.1)];
             this.app.stage.addChildAt(cosmos, 0);
         
-            // new Sprite(PIXI.utils.TextureCache['imagespixel4.jpg']);
-            starTexture = PIXI.Texture.from('images/star.png');
-        
-            starAmount = 1000;
-            cameraZ = 0;
-            fov = 20;
-            baseSpeed = 0.02;
-            speed = 0;
-            warpSpeed = 0;
-            starStretch = 5;
-            starBaseSize = 0.05;
-        
-            // Create the stars
-            stars = [];
-            for (var i = 0; i < starAmount; i++) {
-                var star = {
-                    sprite: new PIXI.Sprite(starTexture),
-                    z: 0,
-                    x: 0,
-                    y: 0
-                };
-                star.sprite.anchor.x = 0.5;
-                star.sprite.anchor.y = 0.7;
-                this.randomizeStar(star, true);
-                this.app.stage.addChild(star.sprite);
-                stars.push(star);
-            }
         
         } else {
             const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel4.jpg']);
@@ -68,33 +41,33 @@ export class Field {
             cosmos.x = 0;
             cosmos.y = 0;
             this.app.stage.addChildAt(cosmos, 0);
+        }
+
+        starTexture = PIXI.Texture.from('images/star.png');
         
-            starTexture = PIXI.Texture.from('images/star.png');
-        
-            starAmount = 200;
-            cameraZ = 0;
-            fov = 20;
-            baseSpeed = 0.01;
-            speed = 0;
-            warpSpeed = 0;
-            starStretch = 5;
-            starBaseSize = 0.05;
-        
-            // Create the stars
-            stars = [];
-            for (var i = 0; i < starAmount; i++) {
-                var star = {
-                    sprite: new PIXI.Sprite(starTexture),
-                    z: 0,
-                    x: 0,
-                    y: 0
-                };
-                star.sprite.anchor.x = 0.5;
-                star.sprite.anchor.y = 0.7;
-                this.randomizeStar(star, true);
-                this.app.stage.addChild(star.sprite);
-                stars.push(star);
-            }
+        starAmount = 200;
+        cameraZ = 0;
+        fov = 20;
+        baseSpeed = 0.01;
+        speed = 0;
+        warpSpeed = 0;
+        starStretch = 5;
+        starBaseSize = 0.05;
+    
+        // Create the stars
+        stars = [];
+        for (var i = 0; i < starAmount; i++) {
+            var star = {
+                sprite: new PIXI.Sprite(starTexture),
+                z: 0,
+                x: 0,
+                y: 0
+            };
+            star.sprite.anchor.x = 0.5;
+            star.sprite.anchor.y = 0.7;
+            this.randomizeStar(star, true);
+            this.app.stage.addChild(star.sprite);
+            stars.push(star);
         }
         
         if(this.isPixelVersion) {

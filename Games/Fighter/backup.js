@@ -28,6 +28,14 @@
         Sprite = PIXI.Sprite,
         Rectangle = PIXI.Rectangle;
 
+        // const Application = PIXI.Application,
+        // Container = PIXI.Container,
+        // loader = PIXI.Loader.shared,
+        // resources = PIXI.Loader.shared.resources,
+        // TextureCache = PIXI.utils.TextureCache,
+        // Sprite = PIXI.Sprite,
+        // Rectangle = PIXI.Rectangle;
+
     const app = new Application({
         width: 1100,    // default: 800
         height: 700     // default: 600

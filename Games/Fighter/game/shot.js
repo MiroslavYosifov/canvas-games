@@ -6,7 +6,7 @@ TextureCache = PIXI.utils.TextureCache,
 Sprite = PIXI.Sprite,
 Rectangle = PIXI.Rectangle;
 
-export class Shots {
+export class Shot {
     constructor(app, shotsCount) {
         this.ammonition = document.getElementById('shot-container');
         this.app = app;

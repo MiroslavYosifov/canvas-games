@@ -1,12 +1,5 @@
-import { Collision } from "./collision.js";
-
-const Application = PIXI.Application,
-Container = PIXI.Container,
-loader = PIXI.Loader.shared,
-resources = PIXI.Loader.shared.resources,
-TextureCache = PIXI.utils.TextureCache,
-Sprite = PIXI.Sprite,
-Rectangle = PIXI.Rectangle;
+const Container = PIXI.Container,
+Sprite = PIXI.Sprite;
 
 export class Fighter {
     constructor(app) {

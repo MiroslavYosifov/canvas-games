@@ -1,11 +1,3 @@
-const Application = PIXI.Application,
-Container = PIXI.Container,
-loader = PIXI.Loader.shared,
-resources = PIXI.Loader.shared.resources,
-TextureCache = PIXI.utils.TextureCache,
-Sprite = PIXI.Sprite,
-Rectangle = PIXI.Rectangle;
-
 export class Meteor {
     constructor(app) {
         this.app = app;
@@ -13,7 +5,13 @@ export class Meteor {
         this.meteors = [];
     }
 
-    generateMeteor() {
+    multiplication() {
+        gsap.to({}, 1.4, { repeat: -1, onRepeat: () => {
+            this.render();
+        } });
+    }
+
+    render() {
         var speed = getRandomInt(1, 4);
     
         var randomMeteor = getRandomInt(0, 9);
@@ -52,10 +50,7 @@ export class Meteor {
 
     move() {
         for (let i = 0; i < this.meteors.length; i++) {
-            // console.log(props.meteors);
             if(this.meteors[i].isLoaded) {
-                // console.log("test");
-                // console.log(props.shots[i].shot.name);
                 this.meteors[i].meteor.x += this.meteors[i].meteor.vx;
                 this.meteors[i].meteor.y += this.meteors[i].meteor.vy;
                 this.checkForMeteorFieldColision(this.meteors[i].meteor, i);
@@ -98,11 +93,11 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
 }
 
-function randomBtwTwoNumbers(up_boundary, low_boundary) {
-    var res = Math.floor(Math.random() * ((up_boundary - low_boundary) + 1));
-    return res;
-}
-
 function getRandomArbitraryDecimal (min, max) {
     return Math.random() * (max - min) + min;
 }
+
+// function randomBtwTwoNumbers(up_boundary, low_boundary) {
+//     var res = Math.floor(Math.random() * ((up_boundary - low_boundary) + 1));
+//     return res;
+// }

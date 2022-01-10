@@ -1,11 +1,10 @@
 import { Fighter } from './fighter.js';
-import { Shots } from './shots.js';
+import { Shot } from './shot.js';
 import { Meteor } from './meteors.js';
 import { Field } from './field.js';
 import { Controllers } from './controllers/controllers.js';
 
 export function game () {
-
     const Application = PIXI.Application;
     const app = new Application({
         width: 1100,
@@ -25,30 +24,25 @@ export function game () {
         ])
         .load(setup);
 
-    let generatedFighter, generatedMeteor, generatedField, generatedShots, controllers, state;
+    let fighter, meteor, field, shot, controllers, state;
 
     function setup() {
 
-        generatedShots = new Shots(app, 18);
-        generatedShots.reloadShots();
-        generatedShots.generateAmmonitions();
+        shot = new Shot(app, 18);
+        shot.reloadShots();
+        shot.generateAmmonitions();
 
-        generatedField = new Field(app, true);
-        generatedField.render();
+        field = new Field(app, false);
+        field.render();
 
-        generatedMeteor = new Meteor (app);
-        generatedFighter = new Fighter (app);
-        generatedFighter.render();
+        meteor = new Meteor(app);
+        meteor.multiplication();
 
-        controllers = new Controllers(generatedFighter, generatedShots);
+        fighter = new Fighter(app);
+        fighter.render();
 
-        gsap.to({}, 1.4, { repeat: -1, onRepeat: () => {
-            generatedMeteor.generateMeteor();
-        } });
-
-        controllers.directions();
-        controllers.flash();
-        controllers.shot();
+        controllers = new Controllers(fighter, shot);
+        controllers.events();
         
         state = play;
         app.ticker.add((delta) => gameLoop(delta));
@@ -60,9 +54,9 @@ export function game () {
     
     function play(delta) {
         controllers.updateState();
-        generatedField.starAnimation(delta);
-        generatedShots.moveShots();
-        generatedMeteor.move();
-        generatedFighter.checkForFieldColision();
+        field.starAnimation(delta);
+        shot.moveShots();
+        meteor.move();
+        fighter.checkForFieldColision();
     }
 }

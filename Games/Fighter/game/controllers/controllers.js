@@ -18,11 +18,13 @@ export class Controllers {
     this.shotKey = keyboard('f');
   }
 
-  directions() {
+  events() {
     this.up();
     this.down();
     this.left();
     this.right();
+    this.flash();
+    this.shot();
   }
 
   up() {
@@ -125,7 +127,4 @@ export class Controllers {
     this.generatedFighter.rotate(this.prevDirection);
     this.generatedFighter.move(this.direction);
   }
-
-
 }
-
