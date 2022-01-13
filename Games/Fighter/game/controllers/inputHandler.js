@@ -1,4 +1,4 @@
-export function keyboard(value) {
+export function inputHandler(value) {
     const key = {};
     key.value = value;
     key.isDown = false;

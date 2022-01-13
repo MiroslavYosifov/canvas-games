@@ -1,3 +1,5 @@
+import { getRandomInt, getRandomArbitraryDecimal } from './math.js';
+
 export class Meteor {
     constructor(app) {
         this.app = app;
@@ -87,17 +89,3 @@ export class Meteor {
     
 }
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min) + min); //The maximum is exclusive and the minimum is inclusive
-}
-
-function getRandomArbitraryDecimal (min, max) {
-    return Math.random() * (max - min) + min;
-}
-
-// function randomBtwTwoNumbers(up_boundary, low_boundary) {
-//     var res = Math.floor(Math.random() * ((up_boundary - low_boundary) + 1));
-//     return res;
-// }

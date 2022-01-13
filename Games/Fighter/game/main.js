@@ -4,7 +4,15 @@ import { Meteor } from './meteors.js';
 import { Field } from './field.js';
 import { Controllers } from './controllers/controllers.js';
 
+let state,
+    field,
+    fighter,
+    shot,
+    meteor,
+    controllers;
+
 export function game () {
+
     const Application = PIXI.Application;
     const app = new Application({
         width: 1100,
@@ -23,8 +31,6 @@ export function game () {
             'images/laser2.png'
         ])
         .load(setup);
-
-    let fighter, meteor, field, shot, controllers, state;
 
     function setup() {
 

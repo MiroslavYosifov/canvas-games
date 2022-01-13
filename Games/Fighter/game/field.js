@@ -32,8 +32,6 @@ export class Field {
             cosmos.scale.set(1, 1); 
             cosmos.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.9, contrast: 1, blue: 0.5, red: 0.4, green: 0.2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.1)];
             this.app.stage.addChildAt(cosmos, 0);
-        
-        
         } else {
             const cosmos = new Sprite(PIXI.utils.TextureCache['images/pixel4.jpg']);
             cosmos.filters = [new PIXI.filters.AdjustmentFilter({ saturation: 0.6, contrast: 1.5, blue: 0.6, red: 0.5, green: 0.5, brightest: 2 }), new PIXI.filters.ColorOverlayFilter([0/255, 0/255, 0/255], 0.55)];
