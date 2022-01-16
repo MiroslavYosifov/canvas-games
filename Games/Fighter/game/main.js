@@ -28,25 +28,25 @@ export function game () {
 
     function setup() {
 
-        STATE.SHOT = new Shot(app, 18, STATE);
-        STATE.SHOT.reloadShots();
-        STATE.SHOT.generateAmmonitions();
+        STATE.shot = new Shot(app, 18, STATE);
+        STATE.shot.reloadShots();
+        STATE.shot.generateAmmonitions();
 
-        STATE.FIELD = new Field(app, false);
-        STATE.FIELD.render();
+        STATE.field = new Field(app, false);
+        STATE.field.render();
 
-        STATE.METEOR = new Meteor(app);
-        STATE.METEOR.multiplication();
+        STATE.meteor = new Meteor(app);
+        STATE.meteor.multiplication();
 
-        STATE.FIGHTER = new Fighter(app, STATE);
-        STATE.FIGHTER.render();
+        STATE.fighter = new Fighter(app, STATE);
+        STATE.fighter.render();
 
-        upCommand.addObserver(STATE.FIGHTER);
-        downCommand.addObserver(STATE.FIGHTER);
-        leftCommand.addObserver(STATE.FIGHTER);
-        rightCommand.addObserver(STATE.FIGHTER);
-        shotCommand.addObserver(STATE.SHOT);
-        flashCommand.addObserver(STATE.FIGHTER);
+        upCommand.addObserver(STATE.fighter);
+        downCommand.addObserver(STATE.fighter);
+        leftCommand.addObserver(STATE.fighter);
+        rightCommand.addObserver(STATE.fighter);
+        shotCommand.addObserver(STATE.shot);
+        flashCommand.addObserver(STATE.fighter);
 
         // STATE.CONTROLLERS = new Controllers(STATE.FIGHTER, STATE.SHOT);
         // STATE.CONTROLLERS.events();  
@@ -61,11 +61,11 @@ export function game () {
     function play(delta) {
         // STATE.CONTROLLERS.updateState();
         if(STATE.direction != STATE.prevDirection) { STATE.prevDirection = STATE.direction; }
-        STATE.FIGHTER.rotate(STATE.prevDirection);
-        STATE.FIGHTER.move(STATE.direction);
-        STATE.FIELD.starAnimation(delta);
-        STATE.SHOT.moveShots();
-        STATE.METEOR.move();
-        STATE.FIGHTER.checkForFieldColision();
+        STATE.fighter.rotate(STATE.prevDirection);
+        STATE.fighter.move(STATE.direction);
+        STATE.field.starAnimation(delta);
+        STATE.shot.moveShots();
+        STATE.meteor.move();
+        STATE.fighter.checkForFieldColision();
     }
 }

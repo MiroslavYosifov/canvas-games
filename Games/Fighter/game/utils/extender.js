@@ -1,0 +1,1 @@
+export const extender = (...parts) => parts.reduce(creator, BaseAnimal);

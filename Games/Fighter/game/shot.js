@@ -21,7 +21,7 @@ export class Shot extends Observer {
 
     update(event) {
         if(event.name = 'shot') {
-            this.shotCommand(this.state.direction, this.state.FIGHTER.fighterContainer);
+            this.shotCommand(this.state.direction, this.state.fighter.fighterContainer);
         }
     }
 

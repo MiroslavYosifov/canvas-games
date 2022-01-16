@@ -22,6 +22,7 @@ export class Fighter extends Observer {
         }
 
         if(event.name === 'flash') {
+
             if(this.state.isFlashLoading) {
                 this.state.isFlashLoading = false;
                 gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
@@ -29,6 +30,47 @@ export class Fighter extends Observer {
                     this.state.isFlashLoading = true;
                 }});
             }
+
+            if(this.state.isFlashLoaded) {
+                this.state.isFlashLoaded = false;
+                this.flash(this.state.direction);
+            }
+        }
+    }
+
+    rotate() {
+        gsap.to(this.fighterContainer, 0.4, { rotation: this.state.rotateDegree });
+    }
+
+    move() {
+        this.fighterContainer.x += this.fighterContainer.vx;
+        this.fighterContainer.y += this.fighterContainer.vy;
+    }
+
+    flash() {
+        this.fighterContainer.x += this.state.flash * this.state.currDirection.x;
+        this.fighterContainer.y += this.state.flash * this.state.currDirection.y;
+    }
+
+    checkForFieldColision() {
+    
+        const fieldW = this.app.view.width;
+        const fieldH = this.app.view.height;
+    
+        const diff = Math.abs(this.fighter.height - this.fighter.width) * 2;
+        const fighterLeftPosition = this.fighterContainer.x - (this.fighter.width - diff / 2);
+        const fighterRigthPosition = this.fighterContainer.x + this.fighter.width - diff / 2;
+        const fighterUpPosition = this.fighterContainer.y - (this.fighter.width - diff / 2);
+        const fighterDownPosition = this.fighterContainer.y + this.fighter.width - diff / 2;
+    
+        if(fighterLeftPosition < 0) {
+            this.fighterContainer.x = fieldW - (this.fighter.width - diff / 2);
+        } else if(fighterRigthPosition > fieldW) {
+            this.fighterContainer.x = (this.fighter.width - diff / 2);
+        } else if(fighterUpPosition < 0) {  
+            this.fighterContainer.y = fieldH - (this.fighter.width - diff / 2);
+        } else if(fighterDownPosition > fieldH) {
+            this.fighterContainer.y = (this.fighter.width - diff / 2); 
         }
     }
 
@@ -36,7 +78,6 @@ export class Fighter extends Observer {
 
         this.renderFighter();
         this.renderFire();
-
         this.fighterContainer = new Container();
         this.fighterContainer.x = 300;
         this.fighterContainer.y = 300;
@@ -48,15 +89,12 @@ export class Fighter extends Observer {
         this.fighterContainer.addChild(this.fighter);
         this.app.stage.addChild(this.fighterContainer);
 
-        if(this.state.command === 'flash' && this.state.isFlashLoaded) {
-            this.state.isFlashLoaded = false;
-            this.state.command = '';
-            this.state.FIGHTER.flash(this.state.prevDirection);
-        }
     }
 
     renderFighter () {
+
         const frames = [];
+
         for (let i = 0; i < 30; i++) {
             const val = i < 10 ? `0${i}` : i;
             frames.push(PIXI.Texture.from(`rollSequence00${val}.png`));
@@ -84,61 +122,5 @@ export class Fighter extends Observer {
                 gsap.to(this.fire, 0.25, { pixi:{ scale: 0.21, y: 158, x: 54 }, delay: 0.25 } );
             } });
         } })
-    }
-
-    move() {
-        this.fighterContainer.x += this.fighterContainer.vx;
-        this.fighterContainer.y += this.fighterContainer.vy;
-    }
-
-    rotate(direction) {
-        if(direction === 'up') {
-            gsap.to(this.fighterContainer, 0.4, { rotation: 0 });
-        } else if (direction === 'down') {
-            gsap.to(this.fighterContainer, 0.4, { rotation: 3.2 });
-        } else if(direction === 'left') {
-            gsap.to(this.fighterContainer, 0.4, { rotation: -1.6 });
-        } else if(direction === 'right') {
-            gsap.to(this.fighterContainer, 0.4, { rotation: 1.6 });
-        }
-    }
-
-    flash(direction) {
-        const flash = 120;
-        if(direction === 'up') {
-            this.fighterContainer.y += (flash * -1);
-            this.fighterContainer.x += 0;
-        } else if (direction === 'down') {
-            this.fighterContainer.y += flash;
-            this.fighterContainer.x += 0;
-        } else if(direction === 'left') {
-            this.fighterContainer.x += (flash * -1);
-            this.fighterContainer.y += 0;
-        } else if(direction === 'right') {
-            this.fighterContainer.x += flash;
-            this.fighterContainer.y += 0;
-        }
-    }
-
-    checkForFieldColision() {
-    
-        const fieldW = this.app.view.width;
-        const fieldH = this.app.view.height;
-    
-        const diff = Math.abs(this.fighter.height - this.fighter.width) * 2;
-        const fighterLeftPosition = this.fighterContainer.x - (this.fighter.width - diff / 2);
-        const fighterRigthPosition = this.fighterContainer.x + this.fighter.width - diff / 2;
-        const fighterUpPosition = this.fighterContainer.y - (this.fighter.width - diff / 2);
-        const fighterDownPosition = this.fighterContainer.y + this.fighter.width - diff / 2;
-    
-        if(fighterLeftPosition < 0) {
-            this.fighterContainer.x = fieldW - (this.fighter.width - diff / 2);
-        } else if(fighterRigthPosition > fieldW) {
-            this.fighterContainer.x = (this.fighter.width - diff / 2);
-        } else if(fighterUpPosition < 0) {  
-            this.fighterContainer.y = fieldH - (this.fighter.width - diff / 2);
-        } else if(fighterDownPosition > fieldH) {
-            this.fighterContainer.y = (this.fighter.width - diff / 2); 
-        }
     }
 }
