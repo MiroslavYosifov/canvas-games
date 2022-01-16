@@ -72,11 +72,11 @@ export class Meteor {
         const meteorDownPosition = meteor.y + meteor.width - diff / 2;
         
         if(meteorLeftPosition < 0) {
-            // killMeteor(meteor, index);
+            // kill(meteor, index);
         } else if(meteorRigthPosition > fieldW + 60) {
             this.kill(meteor, index);
         } else if(meteorUpPosition < 0) {  
-            // killMeteor(meteor, index);
+            // kill(meteor, index);
         } else if(meteorDownPosition > fieldH + 60) {
             this.kill(meteor, index);
         }

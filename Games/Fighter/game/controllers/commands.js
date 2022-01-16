@@ -1,3 +1,5 @@
+import { Subject } from '../observable.js';
+
 class Command { 
     constructor(inputHandler) {
         this.inputHandler = inputHandler;
@@ -5,7 +7,7 @@ class Command {
         this.key.press = this._press.bind(this);
         this.key.release = this._release.bind(this);
     }
-  
+
     _press() {
         console.log('BTN IS PRESSED');
     }
@@ -13,151 +15,131 @@ class Command {
     _release() {
         console.log('BTN IS RELEASED');
     }
-  }
+}
   
-export class ShotCommand extends Command { 
+export class ShotCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
-        if(!this.state.shotCommand) {
-            this.state.shotCommand = 'shot';
-        }
+        this.trigger({ name: 'shot' });
     }
   
     _release() {
       // console.log('BTN IS RELEASED');
     }
-  
-    render() {
-        if(this.state.shotCommand === 'shot') {
-            this.state.shotCommand = '';
-            this.state.SHOT.shotCommand(this.state.prevDirection, this.state.FIGHTER.fighterContainer);
-        }
-    }
 }
   
-export class FlashCommand extends Command { 
+export class FlashCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
-        if(this.state.isFlashLoaded) {
-            this.state.command = 'flash';
-        }
-
         this.inputHandler.unsubscribeKeyDown();
-        if(this.state.isFlashLoading) {
-            this.state.isFlashLoading = false;
-            gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
-                this.state.isFlashLoaded = true;
-                this.state.isFlashLoading = true;
-            }});
-        }
+        if(this.state.isFlashLoaded) { this.state.command = 'flash'; }
+        this.trigger({ name: 'flash' });
     }
   
     _release() {
         this.inputHandler.subscribeKeyDown();
     }
-  
-    render() {
-        if(this.state.command === 'flash' && this.state.isFlashLoaded) {
-            this.state.isFlashLoaded = false;
-            this.state.command = '';
-            this.state.FIGHTER.flash(this.state.prevDirection);
-        }
-    }
 }
   
-export class UpCommand extends Command { 
+export class UpCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
         this.state.direction = 'up';
-        this.state.FIGHTER.start();
+        this.trigger({ name: 'direction', x: 0, y: this.state.speed * -1 });
     }
-  
     _release() {
         if (this.state.direction != 'down' && this.state.FIGHTER.fighterContainer.vx === 0) {
-            this.state.FIGHTER.stop();
+            this.trigger({ name: 'direction', x: 0, y: 0 });
         }
-    }
-  
-    render() {
-      
     }
 }
   
-export class DownCommand extends Command { 
+export class DownCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
         this.state.direction = "down";
-        this.state.FIGHTER.start();
+        this.trigger({ name: 'direction', x: 0, y: this.state.speed });
     }
   
     _release() {
         if (this.state.direction != 'up' && this.state.FIGHTER.fighterContainer.vx === 0) {
-          this.state.FIGHTER.stop();
+            this.trigger({ name: 'direction', x: 0, y: 0 });
         }
-    }
-  
-    render() {
-      
     }
 }
   
-  export class LeftCommand extends Command { 
+  export class LeftCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
         this.state.direction = "left";
-        this.state.FIGHTER.start();
+        this.trigger({ name: 'direction', x: this.state.speed * -1, y: 0 });
     }
   
     _release() {
         if (this.state.direction != 'right' && this.state.FIGHTER.fighterContainer.vy === 0) {
-            this.state.FIGHTER.stop();
+            this.trigger({ name: 'direction', x: 0, y: 0 });
         }
-    }
-  
-    render() {
-      
     }
   }
   
-  export class RightCommand extends Command { 
+  export class RightCommand extends Subject { 
     constructor(inputHandler, state) {
-        super(inputHandler);
+        super();
         this.state = state;
+        this.inputHandler = inputHandler;
+        this.key = this.inputHandler.getKey;
+        this.key.press = this._press.bind(this);
+        this.key.release = this._release.bind(this);
     }
   
     _press() {
         this.state.direction = "right";
-        this.state.FIGHTER.start();
+        this.trigger({ name: 'direction', x: this.state.speed, y: 0 });;
     }
   
     _release() {
-        console.log(this.key.isDown);
         if (this.state.direction != 'left' && this.state.FIGHTER.fighterContainer.vy === 0) {
-            this.state.FIGHTER.stop();
+            this.trigger({ name: 'direction', x: 0, y: 0 });
         }
-    }
-  
-    render() {
-      
     }
 }

@@ -1,3 +1,5 @@
+import { Observer } from './observable.js';
+
 const Application = PIXI.Application,
 Container = PIXI.Container,
 loader = PIXI.Loader.shared,
@@ -6,13 +8,21 @@ TextureCache = PIXI.utils.TextureCache,
 Sprite = PIXI.Sprite,
 Rectangle = PIXI.Rectangle;
 
-export class Shot {
-    constructor(app, shotsCount) {
+export class Shot extends Observer {
+    constructor(app, shotsCount, state) {
+        super();
         this.ammonition = document.getElementById('shot-container');
         this.app = app;
+        this.state = state;
         this.shotsCount = shotsCount;
         this.shot;
         this.shots = [];
+    }
+
+    update(event) {
+        if(event.name = 'shot') {
+            this.shotCommand(this.state.direction, this.state.FIGHTER.fighterContainer);
+        }
     }
 
     shotCommand(direction, fighterContainer) {

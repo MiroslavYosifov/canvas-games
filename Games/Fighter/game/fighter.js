@@ -1,13 +1,35 @@
+import { Observer } from './observable.js';
+
 const Container = PIXI.Container,
 Sprite = PIXI.Sprite;
 
-export class Fighter {
-    constructor(app) {
+export class Fighter extends Observer {
+    constructor(app, state) {
+        super();
         this.app = app;
+        this.state = state;
         this.fighterContainer;
         this.fighter;
         this.fire;
         this.speed = 0;
+    }
+
+    update (event) {
+
+        if(event.name === 'direction') {
+            this.fighterContainer.vx = event.x;
+            this.fighterContainer.vy = event.y;
+        }
+
+        if(event.name === 'flash') {
+            if(this.state.isFlashLoading) {
+                this.state.isFlashLoading = false;
+                gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
+                    this.state.isFlashLoaded = true;
+                    this.state.isFlashLoading = true;
+                }});
+            }
+        }
     }
 
     render() {
@@ -25,6 +47,12 @@ export class Fighter {
         this.fighterContainer.addChild(this.fire);
         this.fighterContainer.addChild(this.fighter);
         this.app.stage.addChild(this.fighterContainer);
+
+        if(this.state.command === 'flash' && this.state.isFlashLoaded) {
+            this.state.isFlashLoaded = false;
+            this.state.command = '';
+            this.state.FIGHTER.flash(this.state.prevDirection);
+        }
     }
 
     renderFighter () {
@@ -58,31 +86,9 @@ export class Fighter {
         } })
     }
 
-    move(direction) {
-        if(direction === 'up') {
-            this.fighterContainer.vy = this.speed * -1;
-            this.fighterContainer.vx = 0;
-        } else if (direction === 'down') {
-            this.fighterContainer.vy = this.speed;
-            this.fighterContainer.vx = 0;
-        } else if(direction === 'left') {
-            this.fighterContainer.vy = 0;
-            this.fighterContainer.vx = this.speed * -1;
-        } else if(direction === 'right') {
-            this.fighterContainer.vy = 0;
-            this.fighterContainer.vx = this.speed;
-        }
-
+    move() {
         this.fighterContainer.x += this.fighterContainer.vx;
         this.fighterContainer.y += this.fighterContainer.vy;
-    }
-
-    stop() {
-        this.speed = 0;
-    }
-
-    start() {
-        this.speed = 5;
     }
 
     rotate(direction) {

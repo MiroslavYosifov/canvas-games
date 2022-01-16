@@ -5,6 +5,7 @@ export const STATE = {
     SHOT: null,
     METEOR: null,
     CONTROLLERS: null,
+    speed: 5,
     command: '',
     shotCommand: '',
     isFlashLoaded: true,

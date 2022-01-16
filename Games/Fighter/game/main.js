@@ -3,15 +3,7 @@ import { Fighter } from './fighter.js';
 import { Shot } from './shot.js';
 import { Meteor } from './meteors.js';
 import { Field } from './field.js';
-import { InputHandler }  from './controllers/inputHandler.js';
-import { ShotCommand, FlashCommand, UpCommand, DownCommand, LeftCommand, RightCommand } from './controllers/commands.js';
-
-let shotCommand;
-let flashCommand;
-let upCommand;
-let downCommand;
-let leftCommand;
-let rightCommand;
+import { shotCommand, flashCommand, upCommand, downCommand, leftCommand, rightCommand } from './controllers/index.js';
 
 export function game () {
 
@@ -36,7 +28,7 @@ export function game () {
 
     function setup() {
 
-        STATE.SHOT = new Shot(app, 18);
+        STATE.SHOT = new Shot(app, 18, STATE);
         STATE.SHOT.reloadShots();
         STATE.SHOT.generateAmmonitions();
 
@@ -46,19 +38,18 @@ export function game () {
         STATE.METEOR = new Meteor(app);
         STATE.METEOR.multiplication();
 
-        STATE.FIGHTER = new Fighter(app);
+        STATE.FIGHTER = new Fighter(app, STATE);
         STATE.FIGHTER.render();
 
-        // STATE.CONTROLLERS = new Controllers(STATE.FIGHTER, STATE.SHOT);
-        // STATE.CONTROLLERS.events();
+        upCommand.addObserver(STATE.FIGHTER);
+        downCommand.addObserver(STATE.FIGHTER);
+        leftCommand.addObserver(STATE.FIGHTER);
+        rightCommand.addObserver(STATE.FIGHTER);
+        shotCommand.addObserver(STATE.SHOT);
+        flashCommand.addObserver(STATE.FIGHTER);
 
-        shotCommand = new ShotCommand(new InputHandler('f'), STATE);
-        flashCommand = new FlashCommand(new InputHandler(' '), STATE);
-        upCommand = new UpCommand(new InputHandler('ArrowUp'), STATE);
-        downCommand = new DownCommand(new InputHandler('ArrowDown'), STATE);
-        leftCommand = new LeftCommand(new InputHandler('ArrowLeft'), STATE);
-        rightCommand = new RightCommand(new InputHandler('ArrowRight'), STATE);
-        
+        // STATE.CONTROLLERS = new Controllers(STATE.FIGHTER, STATE.SHOT);
+        // STATE.CONTROLLERS.events();  
         STATE.ST = play;
         app.ticker.add((delta) => gameLoop(delta));
     }
@@ -70,8 +61,6 @@ export function game () {
     function play(delta) {
         // STATE.CONTROLLERS.updateState();
         if(STATE.direction != STATE.prevDirection) { STATE.prevDirection = STATE.direction; }
-        shotCommand.render();
-        flashCommand.render();
         STATE.FIGHTER.rotate(STATE.prevDirection);
         STATE.FIGHTER.move(STATE.direction);
         STATE.FIELD.starAnimation(delta);
