@@ -1,55 +1,57 @@
-export function inputHandler(value) {
-    const key = {};
-    key.value = value;
-    key.isDown = false;
-    key.isUp = true;
-    key.press = undefined;
-    key.release = undefined;
-    //The `downHandler`
-
-    key.downHandler = (event) => {
-
-      if (event.key === key.value) {
-        if (key.isUp && key.press) {
-          key.press();
-        }
-        key.isDown = true;
-        key.isUp = false;
-        event.preventDefault();
-      }
-    };
+export class InputHandler {
+  constructor(value) {
+      this.key = {};
+      this.key.value = value;
+      this.key.isDown = false;
+      this.key.isUp = true;
+      this.key.release = undefined;
+      this.key.press = undefined;
+      this._downListener = this.#downHandler.bind(this);
+      this._upListener = this.#upHandler.bind(this);
+      this.attachEvents();
+  }
   
-    //The `upHandler`
-    key.upHandler = (event) => {
-      if (event.key === key.value) {
-        if (key.isDown && key.release) {
-          key.release();
-        }
-        key.isDown = false;
-        key.isUp = true;
-        event.preventDefault();
-      }
-    };
-  
-    //Attach event listeners
-    const downListener = key.downHandler.bind(key);
-    const upListener = key.upHandler.bind(key);
-    
-    window.addEventListener("keydown", downListener, false);
-    window.addEventListener("keyup", upListener, false);
-    
-    // Detach event listeners
-    key.unsubscribe = () => {
-      window.removeEventListener("keydown", downListener);
-      window.removeEventListener("keyup", upListener);
-    };
+  get getKey() {
+      return this.key;
+  }
 
-    key.subscribeKeyDown = () => {
-        window.addEventListener("keydown", downListener, false);
+  #downHandler(event) {
+    if (event.key === this.key.value) {
+      if (this.key.isUp && this.key.press) {
+          this.key.press(this.key.value);  
+      }
+      this.key.isDown = true;
+      this.key.isUp = false;
+      event.preventDefault();
     }
-    
-    key.unsubscribeKeyDown = () => {
-        window.removeEventListener("keydown", downListener);
-    }
-    return key;
+  }
+
+  #upHandler(event) {
+    if (event.key === this.key.value) {
+      if (this.key.isDown && this.key.release) {
+          this.key.release(this.key.value);
+      }
+      this.key.isDown = false;
+      this.key.isUp = true;
+      event.preventDefault();
+    }  
+  }
+
+  attachEvents() {
+      window.addEventListener("keydown", this._downListener , false);
+      window.addEventListener("keyup", this._upListener, false);
+  }
+
+  detachEvents() {
+      window.removeEventListener("keydown", this._downListener);
+      window.removeEventListener("keyup", this._upListener);
+  }
+
+  subscribeKeyDown () {
+    window.addEventListener("keydown", this._downListener, false);
+  }
+
+  unsubscribeKeyDown () {
+    window.removeEventListener("keydown", this._downListener);
+  }
 }

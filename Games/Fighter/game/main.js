@@ -1,15 +1,17 @@
+import { STATE } from './state.js';
 import { Fighter } from './fighter.js';
 import { Shot } from './shot.js';
 import { Meteor } from './meteors.js';
 import { Field } from './field.js';
-import { Controllers } from './controllers/controllers.js';
+import { InputHandler }  from './controllers/inputHandler.js';
+import { ShotCommand, FlashCommand, UpCommand, DownCommand, LeftCommand, RightCommand } from './controllers/commands.js';
 
-let state,
-    field,
-    fighter,
-    shot,
-    meteor,
-    controllers;
+let shotCommand;
+let flashCommand;
+let upCommand;
+let downCommand;
+let leftCommand;
+let rightCommand;
 
 export function game () {
 
@@ -34,35 +36,47 @@ export function game () {
 
     function setup() {
 
-        shot = new Shot(app, 18);
-        shot.reloadShots();
-        shot.generateAmmonitions();
+        STATE.SHOT = new Shot(app, 18);
+        STATE.SHOT.reloadShots();
+        STATE.SHOT.generateAmmonitions();
 
-        field = new Field(app, false);
-        field.render();
+        STATE.FIELD = new Field(app, false);
+        STATE.FIELD.render();
 
-        meteor = new Meteor(app);
-        meteor.multiplication();
+        STATE.METEOR = new Meteor(app);
+        STATE.METEOR.multiplication();
 
-        fighter = new Fighter(app);
-        fighter.render();
+        STATE.FIGHTER = new Fighter(app);
+        STATE.FIGHTER.render();
 
-        controllers = new Controllers(fighter, shot);
-        controllers.events();
+        // STATE.CONTROLLERS = new Controllers(STATE.FIGHTER, STATE.SHOT);
+        // STATE.CONTROLLERS.events();
+
+        shotCommand = new ShotCommand(new InputHandler('f'), STATE);
+        flashCommand = new FlashCommand(new InputHandler(' '), STATE);
+        upCommand = new UpCommand(new InputHandler('ArrowUp'), STATE);
+        downCommand = new DownCommand(new InputHandler('ArrowDown'), STATE);
+        leftCommand = new LeftCommand(new InputHandler('ArrowLeft'), STATE);
+        rightCommand = new RightCommand(new InputHandler('ArrowRight'), STATE);
         
-        state = play;
+        STATE.ST = play;
         app.ticker.add((delta) => gameLoop(delta));
     }
     
     function gameLoop(delta) {
-        state(delta);
+        STATE.ST(delta);
     }
     
     function play(delta) {
-        controllers.updateState();
-        field.starAnimation(delta);
-        shot.moveShots();
-        meteor.move();
-        fighter.checkForFieldColision();
+        // STATE.CONTROLLERS.updateState();
+        if(STATE.direction != STATE.prevDirection) { STATE.prevDirection = STATE.direction; }
+        shotCommand.render();
+        flashCommand.render();
+        STATE.FIGHTER.rotate(STATE.prevDirection);
+        STATE.FIGHTER.move(STATE.direction);
+        STATE.FIELD.starAnimation(delta);
+        STATE.SHOT.moveShots();
+        STATE.METEOR.move();
+        STATE.FIGHTER.checkForFieldColision();
     }
 }

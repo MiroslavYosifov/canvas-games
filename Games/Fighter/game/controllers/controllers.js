@@ -1,130 +1,163 @@
-import { inputHandler } from './inputHandler.js';
-
-export class Controllers {
-  constructor(generatedFighter, generatedShots) {
-    this.generatedFighter = generatedFighter;
-    this.generatedShots = generatedShots;
-    this.command = '';
-    this.shotCommand = '';
-    this.isFlashLoaded = true;
-    this.isFlashLoading = true;
-    this.flashProgress = document.getElementById('flash-progres');
-    this.direction = "up";
-    this.upCommand = inputHandler('ArrowUp'),
-    this.downCommand = inputHandler('ArrowDown'),
-    this.leftCommand = inputHandler('ArrowLeft'),
-    this.rightCommand = inputHandler('ArrowRight'),
-    this.spaceCommand = inputHandler(' '),
-    this.shotKey = inputHandler('f');
+class Command { 
+  constructor(inputHandler) {
+    this.inputHandler = inputHandler;
+    this.key = this.inputHandler.getKey;
+    this.key.press = this._press.bind(this);
+    this.key.release = this._release.bind(this);
   }
 
-  events() {
-    this.up();
-    this.down();
-    this.left();
-    this.right();
-    this.flash();
-    this.shot();
+  _press() {
+    console.log('BTN IS PRESSED');
   }
 
-  up() {
-    this.upCommand.press = () => {
-      this.direction = "up";
-      this.generatedFighter.start();
+  _release() {
+    console.log('BTN IS RELEASED');
+  }
+}
+
+export class ShotCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
+  }
+
+  _press() {
+    if(!this.state.shotCommand) {
+      this.state.shotCommand = 'shot';
     }
-    this.upCommand.release = () => {
-        if (!this.downCommand.isDown && this.generatedFighter.fighterContainer.vx === 0) {
-          this.generatedFighter.stop();
-        }
-    };
   }
 
-  down() {
-    this.downCommand.press = () => {
-      this.direction = "down";
-      this.generatedFighter.start();
-    };
-    this.downCommand.release = () => {
-        if (!this.upCommand.isDown && this.generatedFighter.fighterContainer.vx === 0) {
-          this.generatedFighter.stop();
-        }
-    };
+  _release() {
+    // console.log('BTN IS RELEASED');
   }
 
-  left() {
-    this.leftCommand.press = () => {
-      this.direction = "left";
-      this.generatedFighter.start();
-    };
-    this.leftCommand.release = () => {
-        if (!this.rightCommand.isDown && this.generatedFighter.fighterContainer.vy === 0) {
-          this.generatedFighter.stop();
-        }
-    };
+  render() {
+    if(this.state.shotCommand === 'shot') {
+      this.state.shotCommand = '';
+      this.state.SHOT.shotCommand(this.state.prevDirection, this.state.FIGHTER.fighterContainer);
+    }
+  }
+}
+
+export class FlashCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
   }
 
-  right() {
-    this.rightCommand.press = () => {
-      this.direction = "right";
-      this.generatedFighter.start();
-    };
-    this.rightCommand.release = () => {
-        if (!this.leftCommand.isDown && this.generatedFighter.fighterContainer.vy === 0) {
-          this.generatedFighter.stop();
-        }
-    };
-  }
-
-  flash() {
-    this.spaceCommand.press = () => {
+  _press() {
+    if(this.state.isFlashLoaded) {
+      this.state.command = 'flash';
+    }
     
-      if(this.isFlashLoaded) {
-        this.command = 'flash';
-      }
-      this.spaceCommand.unsubscribeKeyDown();
-      if(this.isFlashLoading) {
-        this.isFlashLoading = false;
-          gsap.fromTo(this.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
-            this.isFlashLoaded = true;
-            this.isFlashLoading = true;
-          }});
-      }
-    };
-
-    this.spaceCommand.release = () => {
-      this.spaceCommand.subscribeKeyDown();
-    };
+    this.inputHandler.unsubscribeKeyDown();
+    if(this.state.isFlashLoading) {
+      this.state.isFlashLoading = false;
+        gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
+          this.state.isFlashLoaded = true;
+          this.state.isFlashLoading = true;
+        }});
+    }
   }
 
-  shot() {
-    this.shotKey.press = () => {
-      if(!this.shotCommand) {
-          this.shotCommand = 'shot';
-      }
-    };
+  _release() {
+    this.inputHandler.subscribeKeyDown();
+  }
 
-    this.shotKey.release = () => {
+  render() {
+    if(this.state.command === 'flash' && this.state.isFlashLoaded) {
+      this.state.isFlashLoaded = false;
+      this.state.command = '';
+      this.state.FIGHTER.flash(this.state.prevDirection);
+    }
+  }
+}
+
+export class UpCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
+  }
+
+  _press() {
+    this.state.direction = 'up';
+    this.state.FIGHTER.start();
+  }
+
+  _release() {
+    if (this.state.direction != 'down' && this.state.FIGHTER.fighterContainer.vx === 0) {
+      this.state.FIGHTER.stop();
+    }
+  }
+
+  render() {
     
-    };
+  }
+}
+
+export class DownCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
   }
 
-  updateState() {
-    if(this.direction != this.prevDirection) {
-      this.prevDirection = this.direction;
-    }
+  _press() {
+    this.state.direction = "down";
+    this.state.FIGHTER.start();
+  }
 
-    if(this.command === 'flash' && this.isFlashLoaded) {
-      this.isFlashLoaded = false;
-      this.command = '';
-      this.generatedFighter.flash(this.prevDirection);
+  _release() {
+    if (this.state.direction != 'up' && this.state.FIGHTER.fighterContainer.vx === 0) {
+      this.state.FIGHTER.stop();
     }
+  }
 
-    if(this.shotCommand === 'shot') {
-      this.shotCommand = '';
-      this.generatedShots.shotCommand(this.prevDirection,  this.generatedFighter.fighterContainer);
+  render() {
+    
+  }
+}
+
+export class LeftCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
+  }
+
+  _press() {
+    this.state.direction = "left";
+    this.state.FIGHTER.start();
+  }
+
+  _release() {
+    if (this.state.direction != 'right' && this.state.FIGHTER.fighterContainer.vy === 0) {
+      this.state.FIGHTER.stop();
     }
+  }
 
-    this.generatedFighter.rotate(this.prevDirection);
-    this.generatedFighter.move(this.direction);
+  render() {
+    
+  }
+}
+
+export class RightCommand extends Command { 
+  constructor(inputHandler, state) {
+    super(inputHandler);
+    this.state = state;
+  }
+
+  _press() {
+    this.state.direction = "right";
+    this.state.FIGHTER.start();
+  }
+
+  _release() {
+    console.log(this.key.isDown);
+    if (this.state.direction != 'left' && this.state.FIGHTER.fighterContainer.vy === 0) {
+      this.state.FIGHTER.stop();
+    }
+  }
+
+  render() {
+    
   }
 }
