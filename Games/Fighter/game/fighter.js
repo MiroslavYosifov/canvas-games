@@ -12,11 +12,35 @@ export class Fighter extends Observer {
         this.fighter;
         this.fire;
         this.speed = 0;
+        this.angle = 0;
     }
 
     update (event) {
 
+        // if(event.name === 'forward') {
+        //     var nextX = this.carX + Math.cos(this.carAng) * this.carSpeed;
+        //     var nextY = this.carY + Math.sin(this.carAng) * this.carSpeed;
+        //     this.fighterContainer.vx = event.x;
+        //     this.fighterContainer.vy = event.y;
+        // }
+
+        // if(event.name === 'back') {
+        //     var nextX = this.carX + Math.cos(this.carAng) * this.carSpeed;
+        //     var nextY = this.carY + Math.sin(this.carAng) * this.carSpeed;
+        //     this.fighterContainer.vx = event.x;
+        //     this.fighterContainer.vy = event.y;
+        // }
+
+        // if(event.name === "turnLeft") {
+
+        // }
+
+        // if(event.name === "turnRight") {
+            
+        // }
+
         if(event.name === 'direction') {
+            console.log('', event.name);
             this.fighterContainer.vx = event.x;
             this.fighterContainer.vy = event.y;
         }
@@ -43,6 +67,7 @@ export class Fighter extends Observer {
     }
 
     move() {
+        console.log(this.fighterContainer);
         this.fighterContainer.x += this.fighterContainer.vx;
         this.fighterContainer.y += this.fighterContainer.vy;
     }

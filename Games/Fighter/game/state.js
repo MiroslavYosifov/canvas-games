@@ -13,4 +13,8 @@ export const STATE = {
     shot: null,
     meteor: null,
     controllers: null,
+    DRIVE_POWER: 0.5,
+    REVERSE_POWER: 0.2,
+    TURN_RATE: 0.03,
+    MIN_TURN_SPEED: 0.5
 }
