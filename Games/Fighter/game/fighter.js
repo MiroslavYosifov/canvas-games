@@ -12,62 +12,69 @@ export class Fighter extends Observer {
         this.fighter;
         this.fire;
         this.speed = 0;
+        this.speedRotation = 0;
         this.angle = 0;
     }
 
     update (event) {
+        if(event.name === 'forward') {
+            var nextX = Math.cos(this.angle) * event.speed;
+            var nextY = Math.sin(this.angle) * event.speed;
+            this.fighterContainer.vx = nextX;
+            this.fighterContainer.vy = nextY;
 
-        // if(event.name === 'forward') {
-        //     var nextX = this.carX + Math.cos(this.carAng) * this.carSpeed;
-        //     var nextY = this.carY + Math.sin(this.carAng) * this.carSpeed;
+        }
+
+        if(event.name === 'back') {
+            var nextX = Math.cos(this.angle) * event.speed;
+            var nextY = Math.sin(this.angle) * event.speed;
+            this.fighterContainer.vx = nextX;
+            this.fighterContainer.vy = nextY;
+        }
+
+        if(event.name === "turnLeft") {
+            console.log('turnLeft', event);
+            this.speedRotation = event.angle;
+        }
+
+        if(event.name === "turnRight") {
+            console.log('turnRight', event.angle);
+            this.speedRotation = event.angle;
+        }
+
+        // if(event.name === 'direction') {
         //     this.fighterContainer.vx = event.x;
         //     this.fighterContainer.vy = event.y;
         // }
 
-        // if(event.name === 'back') {
-        //     var nextX = this.carX + Math.cos(this.carAng) * this.carSpeed;
-        //     var nextY = this.carY + Math.sin(this.carAng) * this.carSpeed;
-        //     this.fighterContainer.vx = event.x;
-        //     this.fighterContainer.vy = event.y;
+        // if(event.name === 'flash') {
+
+        //     if(this.state.isFlashLoading) {
+        //         this.state.isFlashLoading = false;
+        //         gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
+        //             this.state.isFlashLoaded = true;
+        //             this.state.isFlashLoading = true;
+        //         }});
+        //     }
+
+        //     if(this.state.isFlashLoaded) {
+        //         this.state.isFlashLoaded = false;
+        //         this.flash(this.state.direction);
+        //     }
         // }
-
-        // if(event.name === "turnLeft") {
-
-        // }
-
-        // if(event.name === "turnRight") {
-            
-        // }
-
-        if(event.name === 'direction') {
-            console.log('', event.name);
-            this.fighterContainer.vx = event.x;
-            this.fighterContainer.vy = event.y;
-        }
-
-        if(event.name === 'flash') {
-
-            if(this.state.isFlashLoading) {
-                this.state.isFlashLoading = false;
-                gsap.fromTo(this.state.flashProgress, 2, { width: '0%' }, { width: '100%', onComplete: () => {
-                    this.state.isFlashLoaded = true;
-                    this.state.isFlashLoading = true;
-                }});
-            }
-
-            if(this.state.isFlashLoaded) {
-                this.state.isFlashLoaded = false;
-                this.flash(this.state.direction);
-            }
-        }
     }
 
     rotate() {
-        gsap.to(this.fighterContainer, 0.4, { rotation: this.state.rotateDegree });
+        this.angle += this.speedRotation;
+        var nextX = Math.cos(this.angle) * this.state.speed;
+        var nextY = Math.sin(this.angle) * this.state.speed;
+        this.fighterContainer.vx = nextX;
+        this.fighterContainer.vy = nextY;
+        this.fighterContainer.rotation = (this.angle + 1.6);
+        // console.log(this.angle);
     }
 
     move() {
-        console.log(this.fighterContainer);
         this.fighterContainer.x += this.fighterContainer.vx;
         this.fighterContainer.y += this.fighterContainer.vy;
     }
@@ -99,21 +106,19 @@ export class Fighter extends Observer {
         }
     }
 
-    render() {
-
+    render() {   
         this.renderFighter();
-        this.renderFire();
+        // this.renderFire();
         this.fighterContainer = new Container();
         this.fighterContainer.x = 300;
         this.fighterContainer.y = 300;
         this.fighterContainer.vx = 0;
         this.fighterContainer.vy = 0;
-        this.fighterContainer.animationSpeed = 0.5;
         this.fighterContainer.pivot.set(this.fighter.width / 2, this.fighter.height / 2);
-        this.fighterContainer.addChild(this.fire);
+        this.fighterContainer.rotation = this.angle;
+        // this.fighterContainer.addChild(this.fire);
         this.fighterContainer.addChild(this.fighter);
         this.app.stage.addChild(this.fighterContainer);
-
     }
 
     renderFighter () {
@@ -128,6 +133,8 @@ export class Fighter extends Observer {
         this.fighter = new PIXI.AnimatedSprite(frames);
         this.fighter.x = 0;
         this.fighter.y = 0;
+        // this.fighter.anchor.set(0.5, 0,5);
+        // this.fighter.rotation = 1.6;
         this.fighter.animationSpeed = 0.5;
         this.fighter.scale.set(0.5, 0.5); 
         this.fighter.play();

@@ -43,15 +43,10 @@ export class UpCommand extends Command {
     }
   
     _press() {
-        this.state.direction = 'up';
-        // this.state.currDirection = { x: 0, y: -1 };
-        // this.state.rotateDegree = 0;
-        this.trigger({ name: 'forward', speed: this.state.speed * -1 });
+        this.trigger({ name: 'forward', speed: this.state.speed });
     }
     _release() {
-        if (this.state.direction != 'down' && this.state.fighter.fighterContainer.vx === 0) {
-            this.trigger({ name: 'forward', speed: 0 });
-        }
+        this.trigger({ name: 'forward', speed: 0 });
     }
 }
 
@@ -63,16 +58,11 @@ export class DownCommand extends Command {
     }
   
     _press() {
-        this.state.direction = "down";
-        this.state.currDirection = { x: 0, y: 1 };
-        this.state.rotateDegree = 3.2;
         this.trigger({ name: 'back', speed: this.state.speed * -1 });
     }
   
     _release() {
-        if (this.state.direction != 'up' && this.state.fighter.fighterContainer.vx === 0) {
-            this.trigger({ name: 'back', speed: 0 });
-        }
+        this.trigger({ name: 'back', speed: 0 });
     }
 }
   
@@ -84,13 +74,11 @@ export class LeftCommand extends Command {
     }
 
     _press() {
-        this.trigger({ name: 'turnLeft', angle: this.state.TURN_RATE * Math.PI });
+        this.trigger({ name: 'turnLeft', angle: (this.state.TURN_RATE * Math.PI) * -1 });
     }
 
     _release() {
-        if (this.state.direction != 'right' && this.state.fighter.fighterContainer.vy === 0) {
-            this.trigger({ name: 'turnLeft', angle: 0 });
-        }
+        this.trigger({ name: 'turnLeft', angle: 0 });
     }
 }
   
@@ -106,9 +94,7 @@ export class RightCommand extends Command {
     }
   
     _release() {
-        if (this.state.direction != 'left' && this.state.fighter.fighterContainer.vy === 0) {
-            this.trigger({ name: 'turnRight', angle: 0 });
-        }
+        this.trigger({ name: 'turnRight', angle: 0 });
     }
 }
   

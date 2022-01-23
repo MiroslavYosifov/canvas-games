@@ -50,19 +50,19 @@ export function game () {
 
         // STATE.CONTROLLERS = new Controllers(STATE.FIGHTER, STATE.SHOT);
         // STATE.CONTROLLERS.events();  
-        STATE.ST = play;
+        STATE.st = play;
         app.ticker.add((delta) => gameLoop(delta));
     }
     
     function gameLoop(delta) {
-        STATE.ST(delta);
+        STATE.st(delta);
     }
     
     function play(delta) {
         // STATE.CONTROLLERS.updateState();
         if(STATE.direction != STATE.prevDirection) { STATE.prevDirection = STATE.direction; }
-        STATE.fighter.rotate(STATE.prevDirection);
-        STATE.fighter.move(STATE.direction);
+        STATE.fighter.rotate();
+        STATE.fighter.move();
         STATE.field.starAnimation(delta);
         STATE.shot.moveShots();
         STATE.meteor.move();
