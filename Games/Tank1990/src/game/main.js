@@ -47,5 +47,6 @@ export function game () {
     function play(delta) {
         //console.log("delta");
         STATE.tank.move();
+        STATE.tank.checkForFieldColision();
     }
 }

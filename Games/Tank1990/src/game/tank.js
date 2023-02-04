@@ -8,12 +8,7 @@ export class Tank extends Observer {
         super();
         this.app = app;
         this.state = state;
-        this.fighter;
-        this.radialRotation = 6.28;
-        // console.log("1", this.radialRotation * 0);
-        // console.log("2", this.radialRotation * 0.25);
-        // console.log("3", this.radialRotation * 0.5);
-        // console.log("4", this.radialRotation * 0.75);
+        this.tank;
     }
 
     update (event) {
@@ -24,19 +19,41 @@ export class Tank extends Observer {
         } else if(event.name === 'up') {
             this.tank.vx = 0;
             this.tank.vy = -5;
-            this.tank.rotation = this.radialRotation * 0;
+            this.tank.rotation = this.state.radialRotation * 0;
         } else if(event.name === 'down') {
             this.tank.vx = 0;
             this.tank.vy = 5;
-            this.tank.rotation = this.radialRotation * 0.5;
+            this.tank.rotation = this.state.radialRotation * 0.5;
         } else if(event.name === "left") {
             this.tank.vx = -5;
             this.tank.vy = 0;
-            this.tank.rotation = this.radialRotation * 0.75;
+            this.tank.rotation = this.state.radialRotation * 0.75;
         } else if(event.name === "right") {
             this.tank.vx = 5;
             this.tank.vy = 0;
-            this.tank.rotation = this.radialRotation * 0.25;
+            this.tank.rotation = this.state.radialRotation * 0.25;
+        }
+    }
+
+
+    checkForFieldColision() {
+    
+        const fieldW = this.app.view.width;
+        const fieldH = this.app.view.height;
+    
+        const leftPosition = this.tank.x - this.tank.width * 0.5;
+        const rigthPosition = this.tank.x + this.tank.width * 0.5;
+        const upPosition = this.tank.y - this.tank.width * 0.5;
+        const downPosition = this.tank.y + this.tank.width * 0.5;
+        
+        if(leftPosition < 0) {
+            this.tank.x = fieldW - this.tank.width * 0.5;
+        } else if(rigthPosition > fieldW) {
+            this.tank.x = this.tank.width * 0.5;
+        } else if(upPosition < 0) {  
+            this.tank.y = fieldH - this.tank.width * 0.5;
+        } else if(downPosition > fieldH) {
+            this.tank.y = this.tank.width * 0.5; 
         }
     }
     
