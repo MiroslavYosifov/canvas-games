@@ -15,26 +15,67 @@ export class Field {
     render() {
         for (let i = 0; i < 625; i++) {
             let square = new PIXI.Graphics();
-            if(i % 2 == 0) {
-                square.beginFill(0xb60c0c);
-            } else {
-                square.beginFill(0x6e3907);
-            }
+            square.pivot.set(20, 20);
+
+            square.lineStyle(1, 0x464646, 1, 0);
+            square.beginFill(0x000000);
+       
           
             square.drawRect(0, 0, 40, 40);
             square.endFill();
 
-            // square.interactive = true;
-            // square.buttonMode = true;
+            // square.anchor.set(0.5, 0.5);
 
-            // square.on('pointerdown', this.onButtonDown);
-            // square.on('pointerover', this.onButtonOver);
-            // square.on('mouseout', this.onButtonOut);
+            square.interactive = true;
+            square.buttonMode = true;
 
-            square.x = (i % 25) * 40;
-            square.y = Math.floor(i / 25) * 40;
+            square.on('pointerover', this.onButtonOver);
+            square.on('mouseout', this.onButtonLeave);
+            square.on('pointerdown', this.onButtonDown);
+  
+            square.x = ((i % 25) * 40) + 20;
+            square.y = (Math.floor(i / 25) * 40) + 20;
             // add squares to stage
             this.app.stage.addChildAt(square, 0);
         }
     }
+
+    onButtonOver(e) {
+        var x = e.currentTarget.x;
+        var y = e.currentTarget.y;
+        e.currentTarget.clear();
+        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
+        e.currentTarget.beginFill(0x6D6D6D);
+        e.currentTarget.drawRect(0, 0, 40, 40);
+        e.currentTarget.endFill();
+        e.currentTarget.x = x;
+        e.currentTarget.y = y;
+    }
+
+    onButtonLeave(e) {
+        var x = e.currentTarget.x;
+        var y = e.currentTarget.y;
+        e.currentTarget.clear();
+        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
+        e.currentTarget.beginFill(0x000000);
+        e.currentTarget.drawRect(0, 0, 40, 40);
+        e.currentTarget.endFill();
+        e.currentTarget.x = x;
+        e.currentTarget.y = y;
+    }
+
+    onButtonDown(e) {
+        e.currentTarget.removeAllListeners(); 
+        
+        var x = e.currentTarget.x;
+        var y = e.currentTarget.y;
+        e.currentTarget.clear();
+        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
+        e.currentTarget.beginFill(0x6D6D6D);
+        e.currentTarget.drawRect(0, 0, 40, 40);
+        e.currentTarget.endFill();
+        e.currentTarget.x = x;
+        e.currentTarget.y = y;
+    }
+
 }
