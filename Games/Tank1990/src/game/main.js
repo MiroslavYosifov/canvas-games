@@ -16,14 +16,16 @@ export function game () {
     app.loader
         .add([
             'images/pixel4.jpg',
-            'images/tank.jpg'
+            'images/tank.jpg',
+            'images/tank.png',
+            'images/brick.png'
         ])
         .load(setup);
 
 
 
     function setup() {
-        console.log(app);
+
         STATE.field = new Field(app, false);
         STATE.field.render();
 

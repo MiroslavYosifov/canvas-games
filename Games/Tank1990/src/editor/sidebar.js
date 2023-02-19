@@ -1,0 +1,1 @@
+// can select different types of bricks

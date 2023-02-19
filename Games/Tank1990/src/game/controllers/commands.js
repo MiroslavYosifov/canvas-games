@@ -26,10 +26,10 @@ export class UpCommand extends Command {
     }
   
     _press() {
-        this.trigger({ name: 'up' });
+        this.trigger({ name: 'up', isPress: true });
     }
     _release() {
-        this.trigger({ name: 'upRelease' });
+        this.trigger({ name: 'up', isPress: false });
     }
 }
 
@@ -41,11 +41,11 @@ export class DownCommand extends Command {
     }
   
     _press() {
-        this.trigger({ name: 'down' });
+        this.trigger({ name: 'down',  isPress: true });
     }
   
     _release() {
-        this.trigger({ name: 'downRelease' });
+        this.trigger({ name: 'down',  isPress: false });
     }
 }
   
@@ -57,11 +57,11 @@ export class LeftCommand extends Command {
     }
 
     _press() {
-        this.trigger({ name: 'left' });
+        this.trigger({ name: 'left', isPress: true });
     }
 
     _release() {
-        this.trigger({ name: 'leftRelease' });
+        this.trigger({ name: 'left', isPress: false });
     }
 }
   
@@ -73,11 +73,11 @@ export class RightCommand extends Command {
     }
   
     _press() {
-        this.trigger({ name: 'right' });
+        this.trigger({ name: 'right', isPress: true });
     }
   
     _release() {
-        this.trigger({ name: 'rightRelease' });
+        this.trigger({ name: 'right', isPress: false });
     }
 }
   
@@ -88,10 +88,12 @@ export class ShotCommand extends Command {
     }
 
     _press() {
-        this.trigger({ name: 'shot' });
+        this.trigger({ name: 'shot', isPress: true  });
     }
 
-    _release() {}
+    _release() {
+        this.trigger({ name: 'shot', isPress: false });
+    }
 }
   
 export class FlashCommand extends Command { 
@@ -101,93 +103,10 @@ export class FlashCommand extends Command {
     }
   
     _press() {
-        this.trigger({ name: 'flash' });
+        this.trigger({ name: 'flash', isPress: true });
     }
   
     _release() {
-
+        this.trigger({ name: 'flash', isPress: false });
     }
 }
-
-// // this.carSpeed += DRIVE_POWER;
-// export class UpCommand extends Command { 
-//     constructor(inputHandler, state) {
-//         super(inputHandler);
-//         this.state = state;
-//     }
-  
-//     _press() {
-//         this.state.direction = 'up';
-//         this.state.currDirection = { x: 0, y: -1 };
-//         this.state.rotateDegree = 0;
-//         this.trigger({ name: 'direction', x: 0, y: this.state.speed * -1 });
-//     }
-//     _release() {
-//         if (this.state.direction != 'down' && this.state.fighter.fighterContainer.vx === 0) {
-//             this.trigger({ name: 'direction', x: 0, y: 0 });
-//         }
-//     }
-// }
-
-// // this.carSpeed -= REVERSE_POWER;
-// export class DownCommand extends Command { 
-//     constructor(inputHandler, state) {
-//         super(inputHandler);
-//         this.state = state;
-//     }
-  
-//     _press() {
-//         this.state.direction = "down";
-//         this.state.currDirection = { x: 0, y: 1 };
-//         this.state.rotateDegree = 3.2;
-//         this.trigger({ name: 'direction', x: 0, y: this.state.speed });
-//     }
-  
-//     _release() {
-//         if (this.state.direction != 'up' && this.state.fighter.fighterContainer.vx === 0) {
-//             this.trigger({ name: 'direction', x: 0, y: 0 });
-//         }
-//     }
-// }
-  
-// // this.carAng -= TURN_RATE*Math.PI;
-// export class LeftCommand extends Command { 
-//     constructor(inputHandler, state) {
-//         super(inputHandler);
-//         this.state = state;
-//     }
-
-//     _press() {
-//         this.state.direction = "left";
-//         this.state.currDirection = { x: -1, y: 0 };
-//         this.state.rotateDegree = -1.6;
-//         this.trigger({ name: 'direction', x: this.state.speed * -1, y: 0 });
-//     }
-
-//     _release() {
-//         if (this.state.direction != 'right' && this.state.fighter.fighterContainer.vy === 0) {
-//             this.trigger({ name: 'direction', x: 0, y: 0 });
-//         }
-//     }
-// }
-  
-// // this.carAng += TURN_RATE*Math.PI;
-// export class RightCommand extends Command { 
-//     constructor(inputHandler, state) {
-//         super(inputHandler);
-//         this.state = state;
-//     }
-  
-//     _press() {
-//         this.state.direction = "right";
-//         this.state.currDirection = { x: 1, y: 0 };
-//         this.state.rotateDegree = 1.6;
-//         this.trigger({ name: 'direction', x: this.state.speed, y: 0 });;
-//     }
-  
-//     _release() {
-//         if (this.state.direction != 'left' && this.state.fighter.fighterContainer.vy === 0) {
-//             this.trigger({ name: 'direction', x: 0, y: 0 });
-//         }
-//     }
-// }
