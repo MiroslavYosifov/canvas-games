@@ -1,42 +1,22 @@
-const Application = PIXI.Application,
-Container = PIXI.Container,
-loader = PIXI.Loader.shared,
-resources = PIXI.Loader.shared.resources,
-TextureCache = PIXI.utils.TextureCache,
-Sprite = PIXI.Sprite,
-Rectangle = PIXI.Rectangle;
+import { GridGenerator } from './grid/gridGenerator.js';
 
 export class Field {
     constructor(app, isPixelVersion) {
+        this.grid;
+        this.gridGenerator = new GridGenerator(40, 25, 25);
         this.app = app;
         this.isPixelVersion = isPixelVersion;
+        this.init();
+    }
+
+    init() {
+        this.gridGenerator.create();
+        this.grid = this.gridGenerator.getGrid;
     }
 
     render() {
-        for (let i = 0; i < 625; i++) {
-            let square = new PIXI.Graphics();
-            square.pivot.set(20, 20);
-
-            square.lineStyle(1, 0x464646, 1, 0);
-            square.beginFill(0x000000);
-       
-          
-            square.drawRect(0, 0, 40, 40);
-            square.endFill();
-
-            // square.anchor.set(0.5, 0.5);
-
-            square.interactive = true;
-            square.buttonMode = true;
-
-            square.on('pointerover', this.onButtonOver);
-            square.on('mouseout', this.onButtonLeave);
-            square.on('pointerdown', this.onButtonDown);
-  
-            square.x = ((i % 25) * 40) + 20;
-            square.y = (Math.floor(i / 25) * 40) + 20;
-            // add squares to stage
-            this.app.stage.addChildAt(square, 0);
+        for (let i = 0; i < this.grid.length; i++) {
+            this.app.stage.addChildAt(this.grid[i].render(), 0);
         }
     }
 
@@ -66,7 +46,7 @@ export class Field {
 
     onButtonDown(e) {
         e.currentTarget.removeAllListeners(); 
-        
+
         var x = e.currentTarget.x;
         var y = e.currentTarget.y;
         e.currentTarget.clear();
