@@ -1,23 +1,38 @@
-import { GridGenerator } from './grid/gridGenerator.js';
+import { Grid } from './grid/grid.js';
+import { Sidebar } from './sidebar/sidebar.js'
+
+const fieldConfig = {
+    size: 50,
+    rows: 20,
+    cols: 20,
+    x: 0,
+    y: 0,
+}
+
+const sideBarConfig = {
+    x: 1100,
+    y: 0,
+    width: 500,
+    height: 1000
+}
 
 export class Field {
     constructor(app, isPixelVersion) {
-        this.grid;
-        this.gridGenerator = new GridGenerator(40, 25, 25);
+        this.grid = new Grid(fieldConfig);
+        this.sideBar = new Sidebar(sideBarConfig);
         this.app = app;
         this.isPixelVersion = isPixelVersion;
         this.init();
     }
 
     init() {
-        this.gridGenerator.create();
-        this.grid = this.gridGenerator.getGrid;
+       
     }
 
     render() {
-        for (let i = 0; i < this.grid.length; i++) {
-            this.app.stage.addChildAt(this.grid[i].render(), 0);
-        }
+        this.app.stage.addChildAt(this.sideBar.render());
+        this.app.stage.addChildAt(this.grid.render());
+        
     }
 
     onButtonOver(e) {

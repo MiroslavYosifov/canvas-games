@@ -4,7 +4,7 @@ export function editor () {
 
     const Application = PIXI.Application;
     const app = new Application({
-        width: 1000,
+        width: 1600,
         height: 1000 
     });
     
