@@ -1,4 +1,4 @@
-export class GridItem {
+export class GridItem  {
     constructor(x, y, width, height) {
         this.rectangle = new PIXI.Graphics();
         this.x = x;

@@ -1,3 +1,4 @@
+import { Observer } from '../utils/observer.js';
 import { Grid } from './grid/grid.js';
 import { Sidebar } from './sidebar/sidebar.js'
 
@@ -16,61 +17,45 @@ const sideBarConfig = {
     height: 1000
 }
 
-export class Field {
+export class Field extends Observer {
     constructor(app, isPixelVersion) {
+        super();
         this.grid = new Grid(fieldConfig);
         this.sideBar = new Sidebar(sideBarConfig);
         this.app = app;
+        this.appContainer = new PIXI.Container();
         this.isPixelVersion = isPixelVersion;
+        this._mouseMoved = this.mouseMoved.bind(this);
         this.init();
     }
 
     init() {
-       
+        this.app.stage.interactive = true;
+        this.app.stage.on('pointermove',  this._mouseMoved);
+    }
+
+    createCurrentFieldType() {
+        this.currentFieldType = new PIXI.Graphics();
+        this.currentFieldType.lineStyle(1, 0x464646, 1, 0);
+        this.currentFieldType.beginFill(0xFFFF00);
+   
+        this.currentFieldType.drawRect(0, 0, 50, 50);
+        this.currentFieldType.endFill();
+        this.currentFieldType.x = 0;
+        this.currentFieldType.y = 0;
+
+        return this.currentFieldType;
     }
 
     render() {
+        this.app.stage.addChildAt(this.createCurrentFieldType());
         this.app.stage.addChildAt(this.sideBar.render());
         this.app.stage.addChildAt(this.grid.render());
-        
     }
 
-    onButtonOver(e) {
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x6D6D6D);
-        e.currentTarget.drawRect(0, 0, 40, 40);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
+    mouseMoved(e) {
+        var pos = e.data.global;
+        this.currentFieldType.x = pos.x;    
+        this.currentFieldType.y = (pos.y - 50);
     }
-
-    onButtonLeave(e) {
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x000000);
-        e.currentTarget.drawRect(0, 0, 40, 40);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
-    }
-
-    onButtonDown(e) {
-        e.currentTarget.removeAllListeners(); 
-
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x6D6D6D);
-        e.currentTarget.drawRect(0, 0, 40, 40);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
-    }
-
 }

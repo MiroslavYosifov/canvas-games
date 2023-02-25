@@ -2,27 +2,36 @@ export class Sidebar {
     constructor({ width, height, x, y }) {
         this.container = new PIXI.Container;
         this.content = new PIXI.Graphics();
+        this.counter = 0;
+        this.textCount = new PIXI.Text("0", { fontFamily: 'Arial', fontSize: 54, fill: 0xff1010, align: 'center' });
         this.width = width;
         this.height = height;
         this.x = x;
         this.y = y;
         this.init();
     }
-
+   
     init() {
-        this.content.lineStyle(1, 0x464646, 1, 0);
-        this.content.beginFill(0xFF0000);
+        this.content.lineStyle(5, 0x464646, 1, 0);
+        // this.content.beginFill(0xFF0000);
 
         this.content.drawRect(0, 0, this.width, this.height);
         this.content.endFill();
         this.content.x = 0;
         this.content.y = 0;
 
+        this.content.addChild(this.textCount);
+
         this.container.width = this.width;
         this.container.height = this.height;
         this.container.x = this.x;
         this.container.y = this.y;
         this.container.addChild(this.content);
+    }
+
+    updateText() {
+        this.counter++;
+        this.textCount.text = this.counter;
     }
 
     render() {
