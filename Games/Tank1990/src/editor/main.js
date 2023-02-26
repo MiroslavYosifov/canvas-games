@@ -1,3 +1,4 @@
+import { state } from './state.js';
 import { Field } from './field.js';
 
 export function editor () {
@@ -18,8 +19,8 @@ export function editor () {
         .load(setup);
 
     function setup() {
-        const field = new Field(app, false);
-        field.render();
+        state.field = new Field(app, false);
+        state.field.render();
 
         // STATE.st = play;
         // app.ticker.add((delta) => editorLoop(delta));

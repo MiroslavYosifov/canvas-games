@@ -1,3 +1,4 @@
+import { state } from '../state.js';
 import { GridItem } from './gridItem.js';
 
 export class Grid {
@@ -7,7 +8,7 @@ export class Grid {
         this.size = size;
         this.rows = rows;
         this.cols = cols;
-        this.itemsCount =  this.rows * this.cols; 
+        this.itemsCount = this.rows * this.cols; 
         this.init();
     }
 
@@ -19,16 +20,24 @@ export class Grid {
         for (let i = 0; i < this.itemsCount; i++) {
             const x = ((i % this.rows) * this.size) + this.size / 2;
             const y = (Math.floor(i / this.cols) * this.size) + this.size / 2;
-            const gridItem = new GridItem(x, y, this.size, this.size);
-            this.grid.push(gridItem);
+            const itemIndex = i;
+            var itemType = itemIndex % 2 ? 'default' : 'default';
+            this.grid[i] = new GridItem(itemIndex, itemType, this.size, this.size, x, y);
+            this.grid[i].onSelectGridItem = this.onSelectGridItem.bind(this);
         }
     }
 
     render() {
         for (let i = 0; i < this.grid.length; i++) {
-            this.container.addChild(this.grid[i].render())
+            this.container.addChild(this.grid[i].render());
         }
         return this.container;
+    }
+
+    onSelectGridItem(itemIndex) {
+        if(!this.grid[itemIndex] || !state.selectedMaterial) return;
+        this.grid[itemIndex].changeTerrain(state.selectedMaterial);
+        this.render();
     }
 
     destroy() {

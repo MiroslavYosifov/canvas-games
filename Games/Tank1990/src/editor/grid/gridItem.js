@@ -1,69 +1,69 @@
-export class GridItem  {
-    constructor(x, y, width, height) {
-        this.rectangle = new PIXI.Graphics();
-        this.x = x;
-        this.y = y;
+import terrain from './terrain/index.js';
+
+export class GridItem {
+    constructor(itemIndex, terrainType, width, height, x, y, ) {
+        this.itemIndex = itemIndex;
+        this.terrainType = terrainType;
         this.width = width;
         this.height = height;
+        this.x = x;
+        this.y = y;
+        this.gridTerrain = new terrain[this.terrainType](this.width, this.height, this.x,  this.y);
+        this.gridTerrainGraphics = this.gridTerrain.generate();
         this._onButtonDown = this.onButtonDown.bind(this);
         this._onButtonOver = this.onButtonOver.bind(this);
         this._onButtonOut = this.onButtonOut.bind(this);
+        this.init();
+    }
+
+    init() {
+        this.addEvents(this.gridTerrainGraphics);
+    }
+
+    update() {
+
+    }
+
+    changeTerrain(terrainType) {
+        this.terrainType = terrainType;
+        this.gridTerrain = new terrain[this.terrainType](this.width, this.height, this.x,  this.y);
+        this.gridTerrainGraphics = this.gridTerrain.generate();
     }
 
     render() {
-        this.rectangle.pivot.set(this.width / 2, this.height / 2);
-        this.rectangle.lineStyle(1, 0x464646, 1, 0);
-        this.rectangle.beginFill(0x000000);
-   
-        this.rectangle.drawRect(0, 0, this.width, this.height);
-        this.rectangle.endFill();
-        this.rectangle.x = this.x;
-        this.rectangle.y = this.y;
+        return this.gridTerrainGraphics;
+    }
 
-        this.rectangle.interactive = true;
-        this.rectangle.buttonMode = true;
-        this.rectangle.on('pointerdown', this._onButtonDown);
-        this.rectangle.on('pointerover', this._onButtonOver);
-        this.rectangle.on('mouseout', this._onButtonOut);
+    addEvents(item) {
+        if(!item) return;
+        item.interactive = true;
+        item.buttonMode = true;
+        item.on('pointerdown', this._onButtonDown);
+        item.on('pointerover', this._onButtonOver);
+        item.on('mouseout', this._onButtonOut);
+    }
 
-        return this.rectangle;
+    removeEvents(item) {
+        if(!item) return;
+        item.interactive = false;
+        item.buttonMode = false;
+        item.off('pointerdown', this._onButtonDown);
+        item.off('pointerover', this._onButtonOver);
+        item.off('mouseout', this._onButtonOut);
     }
 
     onButtonDown(e) {
-        e.currentTarget.removeAllListeners(); 
-
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x6D6D6D);
-        e.currentTarget.drawRect(0, 0, this.width, this.height);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
+        console.log("onButtonDown", this.terrainType);
+        this.onSelectGridItem(this.itemIndex);
     }
 
+    onSelectGridItem() {}
+
     onButtonOver(e) {
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x6D6D6D);
-        e.currentTarget.drawRect(0, 0, this.width, this.height);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
+        // console.log(e);
     }
 
     onButtonOut(e) {
-        var x = e.currentTarget.x;
-        var y = e.currentTarget.y;
-        e.currentTarget.clear();
-        e.currentTarget.lineStyle(1, 0x464646, 1, 0);
-        e.currentTarget.beginFill(0x000000);
-        e.currentTarget.drawRect(0, 0, this.width, this.height);
-        e.currentTarget.endFill();
-        e.currentTarget.x = x;
-        e.currentTarget.y = y;
+        // console.log(e);
     }
 }
